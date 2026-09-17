@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEGIS-X — Explainable Cyber Risk & Exposure Intelligence Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        aegis: {
+                            bg: '#f8fafc',
+                            card: '#ffffff',
+                            border: '#e2e8f0',
+                            text: '#0f172a',
+                            muted: '#64748b',
+                            accent: '#0284c7',
+                            danger: '#dc2626',
+                            success: '#16a34a',
+                            purple: '#7c3aed'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Courier New', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        .aegis-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .aegis-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+        }
+
+        .aegis-pill-btn {
+            background-color: #0f172a;
+            color: #ffffff;
+            border-radius: 9999px;
+            font-weight: 600;
+            padding: 8px 18px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .aegis-pill-btn:hover {
+            background-color: #1e293b;
+            transform: translateY(-1px);
+        }
+
+        .aegis-pill-light {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            border-radius: 9999px;
+            font-weight: 600;
+            padding: 6px 14px;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .aegis-pill-light:hover {
+            background-color: #e2e8f0;
+        }
+
+        .tab-btn-aegis {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn-aegis:hover {
+            color: #0f172a;
+        }
+
+        .tab-btn-active {
+            color: #0284c7 !important;
+            border-bottom-color: #0284c7 !important;
+            background-color: #f0f9ff;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-aegis-bg text-aegis-text min-h-screen flex flex-col antialiased">
+
+    <!-- Header Navbar -->
+    <header class="bg-white border-b border-aegis-border px-8 py-3.5 flex items-center justify-between sticky top-0 z-50 shadow-sm">
+        <div class="flex items-center space-x-8">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('tab-dashboard')">
+                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center font-black text-white text-lg shadow-sm">
+                    A
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl font-extrabold tracking-tight text-slate-900">AEGIS-X</span>
+                    <span class="text-xs text-slate-400 font-semibold hidden md:inline">| Cyber Exposure Intelligence</span>
+                </div>
+            </div>
+
+            <!-- Global Shortcuts -->
+            <nav class="hidden lg:flex items-center space-x-6 text-xs font-semibold text-slate-600">
+                <button onclick="switchTab('tab-dashboard')" class="hover:text-slate-900 transition-colors">Command Center</button>
+                <button onclick="switchTab('tab-incidents')" class="hover:text-slate-900 transition-colors">Incidents Queue</button>
+                <button onclick="switchTab('tab-graph')" class="hover:text-slate-900 transition-colors">Attack Path Graph</button>
+                <button onclick="switchTab('tab-xai')" class="hover:text-slate-900 transition-colors">SHAP XAI Analysis</button>
+                <button onclick="switchTab('tab-tools')" class="hover:text-slate-900 transition-colors">Security Tools</button>
+            </nav>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <div class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-mono border border-emerald-200 font-bold flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>NIST CSF 2.0 VERIFIED</span>
+            </div>
+            <button onclick="switchTab('tab-tools')" class="aegis-pill-btn text-xs shadow-sm">
+                <i data-lucide="scan" class="w-3.5 h-3.5"></i>
+                <span>Scan Telemetry</span>
+            </button>
+            <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold shadow-sm" title="SOC Analyst L2">
+                SA
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <div class="bg-white border-b border-aegis-border px-8 flex items-center space-x-1 overflow-x-auto">
+        <button onclick="switchTab('tab-dashboard')" id="btn-dashboard" class="tab-btn-aegis tab-btn-active">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            <span>Command Center</span>
+        </button>
+        <button onclick="switchTab('tab-incidents')" id="btn-incidents" class="tab-btn-aegis">
+            <i data-lucide="zap" class="w-4 h-4 text-sky-600"></i>
+            <span>Breach Incidents</span>
+            <span id="badge-critical-count" class="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-mono font-bold border border-red-200">2 CRITICAL</span>
+        </button>
+        <button onclick="switchTab('tab-graph')" id="btn-graph" class="tab-btn-aegis">
+            <i data-lucide="share-2" class="w-4 h-4 text-purple-600"></i>
+            <span>Attack Path Graph</span>
+        </button>
+        <button onclick="switchTab('tab-xai')" id="btn-xai" class="tab-btn-aegis">
+            <i data-lucide="user-check" class="w-4 h-4 text-amber-600"></i>
+            <span>SHAP XAI Analysis</span>
+        </button>
+        <button onclick="switchTab('tab-tools')" id="btn-tools" class="tab-btn-aegis">
+            <i data-lucide="wrench" class="w-4 h-4 text-emerald-600"></i>
+            <span>Security Tools & Research</span>
+        </button>
+    </div>
+
+    <!-- Main Workspace Container -->
+    <main class="flex-1 p-8 max-w-7xl mx-auto w-full space-y-8">
+
+        <!-- TAB 1: EXECUTIVE COMMAND CENTER -->
+        <div id="tab-dashboard" class="space-y-8">
+            <!-- Header Banner -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight" id="dash-org-name">
+                        Acme FinTech Ltd. — Security Command Center
+                    </h1>
+                    <p class="text-xs text-slate-500 mt-1">Continuous exposure monitoring, threat correlation, and NIST CSF 2.0 posture evaluation</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="px-3 py-1.5 rounded-xl bg-red-50 text-red-700 border border-red-200 font-mono text-xs font-bold flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+                        <span id="dash-risk-score">93 / 100 CRITICAL RISK</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Top Level Security KPI Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="aegis-card p-5 space-y-2">
+                    <div class="flex items-center justify-between text-xs text-slate-500 font-bold uppercase">
+                        <span>Protected Assets</span>
+                        <i data-lucide="server" class="w-4 h-4 text-sky-600"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-slate-900 font-mono" id="dash-assets-count">10</div>
+                    <div class="text-[11px] text-emerald-600 font-semibold flex items-center space-x-1">
+                        <i data-lucide="check" class="w-3 h-3"></i>
+                        <span>100% Asset Watchlist Enrolled</span>
+                    </div>
+                </div>
+
+                <div class="aegis-card p-5 space-y-2">
+                    <div class="flex items-center justify-between text-xs text-slate-500 font-bold uppercase">
+                        <span>Active Incidents</span>
+                        <i data-lucide="alert-circle" class="w-4 h-4 text-red-600"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-red-600 font-mono" id="dash-incidents-count">2</div>
+                    <div class="text-[11px] text-red-600 font-semibold">2 Critical Incidents Escalated</div>
+                </div>
+
+                <div class="aegis-card p-5 space-y-2">
+                    <div class="flex items-center justify-between text-xs text-slate-500 font-bold uppercase">
+                        <span>Mean Time to Triage</span>
+                        <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-slate-900 font-mono">4.2m</div>
+                    <div class="text-[11px] text-emerald-600 font-semibold">88% Faster than Industry Avg</div>
+                </div>
+
+                <div class="aegis-card p-5 space-y-2">
+                    <div class="flex items-center justify-between text-xs text-slate-500 font-bold uppercase">
+                        <span>Alert Reduction Rate</span>
+                        <i data-lucide="filter" class="w-4 h-4 text-purple-600"></i>
+                    </div>
+                    <div class="text-3xl font-extrabold text-purple-600 font-mono">92.4%</div>
+                    <div class="text-[11px] text-slate-500 font-semibold">Campaign Clustering Active</div>
+                </div>
+            </div>
+
+            <!-- NIST CSF 2.0 Posture Grid -->
+            <div class="aegis-card p-6 space-y-4">
+                <h3 class="text-base font-bold text-slate-900 border-b border-slate-200 pb-3">
+                    NIST CSF 2.0 Framework Implementation Health
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                        <div class="text-xs font-bold text-slate-500">GOVERN</div>
+                        <div class="text-2xl font-extrabold text-sky-600 mt-1 font-mono">100%</div>
+                        <div class="text-[10px] text-slate-500 mt-1">RBAC & Tenant Isolation</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                        <div class="text-xs font-bold text-slate-500">IDENTIFY</div>
+                        <div class="text-2xl font-extrabold text-sky-600 mt-1 font-mono">96%</div>
+                        <div class="text-[10px] text-slate-500 mt-1">Asset Watchlist</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                        <div class="text-xs font-bold text-slate-500">PROTECT</div>
+                        <div class="text-2xl font-extrabold text-amber-600 mt-1 font-mono">82%</div>
+                        <div class="text-[10px] text-slate-500 mt-1">VPN Patch Pending</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                        <div class="text-xs font-bold text-slate-500">DETECT</div>
+                        <div class="text-2xl font-extrabold text-emerald-600 mt-1 font-mono">98%</div>
+                        <div class="text-[10px] text-slate-500 mt-1">Telemetry Stream</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                        <div class="text-xs font-bold text-slate-500">RESPOND</div>
+                        <div class="text-2xl font-extrabold text-purple-600 mt-1 font-mono">91%</div>
+                        <div class="text-[10px] text-slate-500 mt-1">P0 Playbooks Ready</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                        <div class="text-xs font-bold text-slate-500">RECOVER</div>
+                        <div class="text-2xl font-extrabold text-sky-600 mt-1 font-mono">95%</div>
+                        <div class="text-[10px] text-slate-500 mt-1">Hash Audit Trail</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operational Quick Action Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="aegis-card p-6 space-y-3 cursor-pointer hover:border-sky-300" onclick="switchTab('tab-incidents')">
+                    <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-bold">
+                        <i data-lucide="zap" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="text-base font-bold text-slate-900">Investigate Incidents</h4>
+                    <p class="text-xs text-slate-500">Review real-time breach exposure incidents, severity classifications, and assigned analysts.</p>
+                    <span class="text-xs text-sky-600 font-bold inline-flex items-center gap-1">Open Queue &rarr;</span>
+                </div>
+
+                <div class="aegis-card p-6 space-y-3 cursor-pointer hover:border-sky-300" onclick="switchTab('tab-graph')">
+                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
+                        <i data-lucide="share-2" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="text-base font-bold text-slate-900">Explore Attack Graph</h4>
+                    <p class="text-xs text-slate-500">Visualize blast radius propagation from identity leaks to internal databases.</p>
+                    <span class="text-xs text-sky-600 font-bold inline-flex items-center gap-1">View Graph &rarr;</span>
+                </div>
+
+                <div class="aegis-card p-6 space-y-3 cursor-pointer hover:border-sky-300" onclick="switchTab('tab-xai')">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
+                        <i data-lucide="sliders" class="w-5 h-5"></i>
+                    </div>
+                    <h4 class="text-base font-bold text-slate-900">Execute Playbooks</h4>
+                    <p class="text-xs text-slate-500">Inspect SHAP risk factor attributions and execute credential reset or session revocation playbooks.</p>
+                    <span class="text-xs text-sky-600 font-bold inline-flex items-center gap-1">Inspect SHAP &rarr;</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: BREACH INCIDENT QUEUE -->
+        <div id="tab-incidents" class="space-y-6 hidden">
+            <!-- Active Alert Banner -->
+            <div class="aegis-card p-6 border-l-4 border-l-red-600 bg-red-50/40 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                <div class="flex items-start space-x-4">
+                    <div class="p-3 rounded-xl bg-red-100 text-red-600 border border-red-200 shrink-0">
+                        <i data-lucide="alert-triangle" class="w-6 h-6 animate-pulse"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-3">
+                            <h2 class="text-base font-bold text-slate-900">ACTIVE CRITICAL BREACH EXPOSURE</h2>
+                            <span class="px-2.5 py-0.5 rounded bg-red-100 text-red-700 font-mono text-xs font-bold border border-red-200">REAL-TIME TELEMETRY</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mt-1 max-w-3xl">
+                            Privileged credential exposure reaching mission-critical <strong class="text-slate-900">ERP-01 Engine</strong> and <strong class="text-slate-900">FinanceDB Production Cluster</strong>.
+                        </p>
+                    </div>
+                </div>
+                <button onclick="switchTab('tab-xai')" class="aegis-pill-btn text-xs bg-red-600 hover:bg-red-700 text-white shrink-0">
+                    Investigate Critical Incident &rarr;
+                </button>
+            </div>
+
+            <!-- Filter & Search Controls -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center space-x-2 text-xs font-semibold">
+                    <span class="text-slate-500">Filter Severity:</span>
+                    <button onclick="filterIncidents('ALL')" class="px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-bold">ALL</button>
+                    <button onclick="filterIncidents('CRITICAL')" class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold border border-red-200">CRITICAL</button>
+                    <button onclick="filterIncidents('HIGH')" class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold border border-amber-200">HIGH</button>
+                </div>
+                <div class="relative w-full sm:w-64">
+                    <input type="text" id="incident-search" oninput="searchIncidents()" placeholder="Search incidents..." class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-sky-500 font-mono">
+                </div>
+            </div>
+
+            <!-- Dynamic Incident List Container -->
+            <div id="incidents-feed-container" class="space-y-4">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+
+        <!-- TAB 3: ATTACK PATH & BLAST RADIUS GRAPH -->
+        <div id="tab-graph" class="space-y-6 hidden">
+            <div class="aegis-card p-6 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Trust Exchange & Attack Path Knowledge Graph</h2>
+                        <p class="text-xs text-slate-500">NetworkX graph traversal mapping identity exposure propagation to enterprise crown jewel assets</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-mono font-bold border border-purple-200">NetworkX Graph Engine</span>
+                </div>
+
+                <!-- Attack Path Visualizer -->
+                <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 space-y-6">
+                    <h3 class="text-xs font-bold text-slate-700 font-mono uppercase tracking-wider">Plausible Defensive Attack Sequence (Incident #AEX-00294)</h3>
+                    
+                    <div id="attack-path-nodes-container" class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <!-- Selected Node Info Box -->
+                    <div id="node-info-box" class="p-4 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+                        <div>
+                            <span class="text-sky-600 font-bold font-mono">SELECTED GRAPH NODE:</span>
+                            <span id="node-info-title" class="text-slate-900 font-bold ml-2">CFO Password Indicator</span>
+                            <p id="node-info-desc" class="text-[11px] text-slate-500 mt-0.5">Click any attack path node above to inspect structural parameters.</p>
+                        </div>
+                        <span class="aegis-pill-light text-[10px] shrink-0">GRAPH NODE DETAILS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: SHAP XAI ANALYSIS & REMEDIATION -->
+        <div id="tab-xai" class="space-y-6 hidden">
+            <div class="aegis-card p-6 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                    <div>
+                        <span id="xai-sev-badge" class="px-2.5 py-1 rounded bg-red-100 text-red-700 font-mono text-xs font-bold border border-red-200">SEVERITY 93 / 100 — CRITICAL</span>
+                        <h2 id="xai-title" class="text-lg font-bold text-slate-900 mt-2">Incident #AEX-00294 — CFO Credential Leak & XAI Breakdown</h2>
+                    </div>
+                    <span id="xai-conf-badge" class="px-3 py-1 rounded-full bg-sky-100 text-sky-700 text-xs font-mono font-bold border border-sky-200">CONFIDENCE 88% HIGH</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Narrative Box -->
+                        <div id="xai-narrative-box" class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed shadow-sm">
+                            <strong class="text-sky-600 font-mono">SHAP XAI NARRATIVE EXPLANATION:</strong><br>
+                            <span id="xai-narrative-text">"Risk is classified as <span class="text-red-600 font-bold">CRITICAL (Score 93/100)</span> because a recently exposed privileged Finance identity (<strong class="text-slate-900">cfo@acme.test</strong>) has direct access to mission-critical <strong class="text-slate-900">ERP-01 Engine</strong> and <strong class="text-slate-900">FinanceDB</strong>, while the associated internet-facing VPN gateway contains an actively exploited CISA KEV vulnerability (<strong class="text-slate-900">CVE-2024-21887</strong>)."</span>
+                        </div>
+
+                        <!-- SHAP Canvas -->
+                        <div class="h-64 relative">
+                            <canvas id="shapChart"></canvas>
+                        </div>
+
+                        <!-- Interactive Simulator -->
+                        <div class="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-4">
+                            <h3 class="text-xs font-bold text-slate-900 font-mono flex items-center space-x-2">
+                                <i data-lucide="sliders" class="w-4 h-4 text-sky-600"></i>
+                                <span>Interactive Risk & Posture Simulator</span>
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                                <div class="p-3.5 rounded-lg bg-white border border-slate-200 space-y-1.5 shadow-sm">
+                                    <div class="flex justify-between text-slate-700">
+                                        <span>MFA Enforced:</span>
+                                        <span id="sim-mfa-val" class="font-mono text-red-600 font-bold">NO (0)</span>
+                                    </div>
+                                    <input type="range" id="sim-mfa" min="0" max="1" value="0" oninput="updateRiskSimulator()" class="w-full accent-sky-600">
+                                </div>
+                                <div class="p-3.5 rounded-lg bg-white border border-slate-200 space-y-1.5 shadow-sm">
+                                    <div class="flex justify-between text-slate-700">
+                                        <span>Exposure Age:</span>
+                                        <span id="sim-age-val" class="font-mono text-red-600 font-bold">2 Hours (Recent)</span>
+                                    </div>
+                                    <input type="range" id="sim-age" min="1" max="10" value="10" oninput="updateRiskSimulator()" class="w-full accent-sky-600">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Remediation Deck -->
+                    <div class="space-y-6">
+                        <div class="aegis-card p-6 space-y-4">
+                            <h3 class="text-sm font-bold text-slate-900 border-b border-slate-200 pb-3">Remediation Playbooks</h3>
+                            <div id="remediation-deck-container" class="space-y-3">
+                                <!-- Populated dynamically -->
+                            </div>
+                            
+                            <!-- Cryptographic Audit Event Banner -->
+                            <div id="audit-banner" class="hidden p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-800 space-y-1 font-mono">
+                                <div class="font-bold flex items-center space-x-1">
+                                    <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+                                    <span>HASH-CHAINED AUDIT VERIFIED</span>
+                                </div>
+                                <div class="truncate text-[10px] text-emerald-700" id="audit-hash-display"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: SECURITY TOOLS (ASSET WATCHLIST, NLP EXTRACTOR, ABLATION BENCHMARK) -->
+        <div id="tab-tools" class="space-y-8 hidden">
+            <!-- Asset Watchlist Table -->
+            <div class="aegis-card p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Registered Asset Watchlist & Inventory</h2>
+                        <p class="text-xs text-slate-500">Corporate domains, servers, databases, cloud resources, and vendor integrations</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-mono font-bold border border-emerald-200">10 ASSETS ENROLLED</span>
+                </div>
+
+                <div class="overflow-x-auto text-xs">
+                    <table class="w-full text-left">
+                        <thead class="text-slate-500 border-b border-slate-200 font-mono">
+                            <tr>
+                                <th class="py-2.5 px-3">Asset Name</th>
+                                <th class="py-2.5 px-3">Type</th>
+                                <th class="py-2.5 px-3">Department</th>
+                                <th class="py-2.5 px-3">Criticality</th>
+                                <th class="py-2.5 px-3">Data Classification</th>
+                                <th class="py-2.5 px-3">Internet Exposed</th>
+                                <th class="py-2.5 px-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assets-table-body" class="divide-y divide-slate-200 font-mono text-slate-700">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- NLP Entity Extractor -->
+            <div class="aegis-card p-6 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">NLP Threat Log & Entity Extraction Gateway</h2>
+                        <p class="text-xs text-slate-500">Extract identities, emails, API keys, and secret indicators with automatic tokenization and secret redaction</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-mono font-bold border border-indigo-200">REDACTION ACTIVE</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <label class="text-xs font-bold text-slate-700">Raw Threat Log / Dark Web Dump Snippet:</label>
+                        <textarea id="nlp-input-text" rows="6" class="w-full p-3 rounded-xl border border-slate-300 focus:outline-none focus:border-sky-500 font-mono text-xs" placeholder="Paste threat text, email dumps, or secret keys here..."></textarea>
+                        <button onclick="runNLPExtraction()" class="aegis-pill-btn text-xs w-full text-center">
+                            <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+                            <span>Extract Entities & Redact Secrets</span>
+                        </button>
+                    </div>
+
+                    <div class="space-y-3">
+                        <label class="text-xs font-bold text-slate-700">Structured Extracted Output (Tokenized & Safe):</label>
+                        <pre id="nlp-output-json" class="p-4 rounded-xl bg-slate-900 text-emerald-400 font-mono text-[11px] h-48 overflow-y-auto border border-slate-800">
+{
+  "status": "READY",
+  "message": "Click 'Extract Entities' to run NLP engine."
+}
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Research Ablation Study -->
+            <div class="aegis-card p-6 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Research Benchmark — 8-Stage Ablation Study</h2>
+                        <p class="text-xs text-slate-500">Quantitative evaluation of model performance from Model A to Model H</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-mono font-bold border border-purple-200">PUBLISHABLE BENCHMARK</span>
+                </div>
+
+                <div class="h-64 relative">
+                    <canvas id="ablationChart"></canvas>
+                </div>
+
+                <div class="overflow-x-auto text-xs">
+                    <table class="w-full text-left">
+                        <thead class="text-slate-500 border-b border-slate-200 font-mono">
+                            <tr>
+                                <th class="py-2.5 px-3">Model Stage</th>
+                                <th class="py-2.5 px-3">Features</th>
+                                <th class="py-2.5 px-3">Precision</th>
+                                <th class="py-2.5 px-3">Recall</th>
+                                <th class="py-2.5 px-3">Macro-F1</th>
+                                <th class="py-2.5 px-3">PR-AUC</th>
+                                <th class="py-2.5 px-3">ECE</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ablation-table-body" class="divide-y divide-slate-200 font-mono text-slate-700">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Minimal Clean Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto py-6 px-8 text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-2 font-bold text-slate-900">
+                <span>AEGIS-X v1.0</span>
+                <span class="text-xs text-sky-600 font-mono font-normal">| Continuous Cyber Exposure & Risk Intelligence Platform</span>
+            </div>
+            <div class="text-[11px] text-slate-400">
+                NIST CSF 2.0 Compliant &bull; Cryptographic Hash Audit Enabled
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let shapChartInstance = null;
+        let allIncidents = [];
+        let currentIncidentId = 'inc-00294';
+
+        function switchTab(tabId) {
+            const tabs = ['tab-dashboard', 'tab-incidents', 'tab-graph', 'tab-xai', 'tab-tools'];
+            tabs.forEach(id => {
+                const el = document.getElementById(id);
+                const btn = document.getElementById('btn-' + id.replace('tab-', ''));
+                if (id === tabId) {
+                    el.classList.remove('hidden');
+                    if (btn) btn.classList.add('tab-btn-active');
+                } else {
+                    el.classList.add('hidden');
+                    if (btn) btn.classList.remove('tab-btn-active');
+                }
+            });
+            lucide.createIcons();
+        }
+
+        async function loadDashboardSummary() {
+            try {
+                const res = await fetch('/api/v1/dashboard/summary');
+                const data = await res.json();
+                document.getElementById('dash-org-name').innerText = `${data.organization_name} — Security Command Center`;
+                document.getElementById('dash-risk-score').innerText = `${data.overall_risk_score} / 100 CRITICAL RISK`;
+                document.getElementById('dash-assets-count').innerText = data.total_protected_assets;
+                document.getElementById('dash-incidents-count').innerText = data.active_incidents;
+                document.getElementById('badge-critical-count').innerText = `${data.critical_incidents} CRITICAL`;
+            } catch (err) {
+                console.error('Error fetching dashboard summary:', err);
+            }
+        }
+
+        async function loadIncidents() {
+            try {
+                const res = await fetch('/api/v1/incidents');
+                allIncidents = await res.json();
+                renderIncidentsFeed(allIncidents);
+            } catch (err) {
+                console.error('Error fetching incidents:', err);
+            }
+        }
+
+        function renderIncidentsFeed(incidents) {
+            const container = document.getElementById('incidents-feed-container');
+            container.innerHTML = '';
+            incidents.forEach(inc => {
+                const card = `
+                    <div class="aegis-card p-6 hover:border-red-300 transition-all cursor-pointer" onclick="inspectIncident('${inc.incident_id}')">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                            <div class="space-y-2">
+                                <div class="flex items-center space-x-3">
+                                    <span class="px-2.5 py-1 rounded bg-red-100 text-red-700 font-mono text-xs font-bold border border-red-200">SEVERITY ${inc.severity_score} — ${inc.severity}</span>
+                                    <span class="px-2.5 py-1 rounded bg-sky-100 text-sky-700 font-mono text-xs font-bold border border-sky-200">CONFIDENCE ${inc.confidence_score}%</span>
+                                    <span class="text-xs text-slate-500 font-mono">#${inc.incident_id}</span>
+                                </div>
+                                <h3 class="text-base font-bold text-slate-900 hover:text-sky-600 transition-colors">
+                                    ${inc.title}
+                                </h3>
+                                <div class="flex flex-wrap items-center gap-4 text-xs text-slate-600">
+                                    <span>Category: <strong class="text-slate-900">${inc.category}</strong></span>
+                                    <span>Blast Radius: <strong class="text-red-600 font-bold">${inc.blast_radius_score}/100</strong></span>
+                                    <span>Business Impact: <strong class="text-slate-900 font-bold">${inc.business_impact_score}/100</strong></span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3 shrink-0">
+                                <div class="text-right text-xs">
+                                    <div class="text-slate-500 font-mono">Status: ${inc.status}</div>
+                                    <div class="text-amber-600 font-bold">Assigned: ${inc.assigned_to}</div>
+                                </div>
+                                <button class="aegis-pill-light text-xs">Inspect &rarr;</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        function filterIncidents(sev) {
+            if (sev === 'ALL') {
+                renderIncidentsFeed(allIncidents);
+            } else {
+                const filtered = allIncidents.filter(i => i.severity === sev);
+                renderIncidentsFeed(filtered);
+            }
+        }
+
+        function searchIncidents() {
+            const query = document.getElementById('incident-search').value.toLowerCase();
+            const filtered = allIncidents.filter(i => i.title.toLowerCase().includes(query) || i.incident_id.toLowerCase().includes(query));
+            renderIncidentsFeed(filtered);
+        }
+
+        async function inspectIncident(incidentId) {
+            currentIncidentId = incidentId;
+            try {
+                const res = await fetch(`/api/v1/incidents/${incidentId}`);
+                const data = await res.json();
+                
+                document.getElementById('xai-title').innerText = `${data.title} & XAI Breakdown`;
+                document.getElementById('xai-sev-badge').innerText = `SEVERITY ${data.severity_score} / 100 — ${data.severity}`;
+                document.getElementById('xai-conf-badge').innerText = `CONFIDENCE ${data.confidence_score}% HIGH`;
+
+                // Render Recommendations
+                const deck = document.getElementById('remediation-deck-container');
+                deck.innerHTML = '';
+                if (data.recommendations) {
+                    data.recommendations.forEach(r => {
+                        const recHtml = `
+                            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                                <div>
+                                    <span class="px-2 py-0.5 rounded bg-red-100 text-red-700 font-mono text-[10px] font-bold">${r.priority}</span>
+                                    <div class="text-xs font-bold text-slate-900 mt-1">${r.description}</div>
+                                </div>
+                                <button onclick="triggerRemediation('${r.recommendation_id}', '${r.action_type}')" id="btn-${r.recommendation_id}" class="${r.status === 'COMPLETED' ? 'aegis-pill-btn text-xs bg-emerald-600 text-white font-bold' : 'aegis-pill-btn text-xs shadow-sm'}">
+                                    ${r.status === 'COMPLETED' ? '✓ Executed' : 'Execute'}
+                                </button>
+                            </div>
+                        `;
+                        deck.innerHTML += recHtml;
+                    });
+                }
+
+                // Render Attack Path Nodes
+                const nodesContainer = document.getElementById('attack-path-nodes-container');
+                nodesContainer.innerHTML = '';
+                if (data.attack_paths && data.attack_paths.length > 0) {
+                    const path = data.attack_paths[0];
+                    path.nodes.forEach(n => {
+                        const nodeHtml = `
+                            <div class="p-4 rounded-xl bg-white border border-slate-200 text-center hover:scale-105 transition-transform cursor-pointer shadow-sm" onclick="showNodeDetails('${n.entity_name}', '${n.relationship} sequence step #${n.sequence_no}')">
+                                <span class="px-2 py-0.5 rounded bg-sky-100 text-sky-700 text-[10px] font-mono font-bold">${n.sequence_no}. ${n.entity_type}</span>
+                                <div class="text-xs font-bold text-slate-900 mt-2">${n.entity_name}</div>
+                                <div class="text-[10px] text-slate-500 mt-1">${n.relationship}</div>
+                            </div>
+                        `;
+                        nodesContainer.innerHTML += nodeHtml;
+                    });
+                }
+
+                switchTab('tab-xai');
+            } catch (err) {
+                console.error('Error fetching incident detail:', err);
+            }
+        }
+
+        async function loadAssets() {
+            try {
+                const res = await fetch('/api/v1/assets');
+                const assets = await res.json();
+                const tbody = document.getElementById('assets-table-body');
+                tbody.innerHTML = '';
+                assets.forEach(a => {
+                    const row = `
+                        <tr>
+                            <td class="py-2.5 px-3 font-bold text-slate-900">${a.name}</td>
+                            <td class="py-2.5 px-3 text-sky-600">${a.type}</td>
+                            <td class="py-2.5 px-3">${a.department}</td>
+                            <td class="py-2.5 px-3 font-bold text-amber-600">${a.criticality} / 10</td>
+                            <td class="py-2.5 px-3 text-slate-500">${a.data_classification}</td>
+                            <td class="py-2.5 px-3">${a.internet_exposed ? '<span class="text-red-600 font-bold">YES</span>' : '<span class="text-emerald-600">NO</span>'}</td>
+                            <td class="py-2.5 px-3 text-emerald-600 font-bold">${a.status}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } catch (err) {
+                console.error('Error fetching assets:', err);
+            }
+        }
+
+        async function runNLPExtraction() {
+            const text = document.getElementById('nlp-input-text').value;
+            if (!text.trim()) return;
+            try {
+                const res = await fetch('/api/v1/extract-entity', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text })
+                });
+                const data = await res.json();
+                document.getElementById('nlp-output-json').innerText = JSON.stringify(data, null, 2);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function showNodeDetails(title, desc) {
+            document.getElementById('node-info-title').innerText = title;
+            document.getElementById('node-info-desc').innerText = desc;
+        }
+
+        function updateRiskSimulator() {
+            const mfa = parseInt(document.getElementById('sim-mfa').value);
+            const age = parseInt(document.getElementById('sim-age').value);
+
+            document.getElementById('sim-mfa-val').innerText = mfa ? "YES (Enforced -8.5)" : "NO (0)";
+            document.getElementById('sim-mfa-val').className = mfa ? "font-mono text-emerald-600 font-bold" : "font-mono text-red-600 font-bold";
+            document.getElementById('sim-age-val').innerText = age > 6 ? `${11-age} Hours (Recent)` : `${11-age} Days (Stale)`;
+
+            if (shapChartInstance) {
+                shapChartInstance.data.datasets[0].data = [18.4, 16.8, age * 1.45, 13.2, 11.6, mfa ? -8.5 : 0.0];
+                shapChartInstance.update();
+            }
+        }
+
+        async function triggerRemediation(recId, actionType) {
+            const btn = document.getElementById('btn-' + recId);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Executing...";
+            }
+            try {
+                const res = await fetch(`/api/v1/incidents/${currentIncidentId}/remediate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ recommendation_id: recId, action_type: actionType })
+                });
+                const data = await res.json();
+                if (btn) {
+                    btn.className = "aegis-pill-btn text-xs bg-emerald-600 text-white font-bold";
+                    btn.innerText = "✓ Executed";
+                }
+                if (data.audit_event_hash) {
+                    document.getElementById('audit-banner').classList.remove('hidden');
+                    document.getElementById('audit-hash-display').innerText = `HASH: ${data.audit_event_hash}`;
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            loadDashboardSummary();
+            loadIncidents();
+            loadAssets();
+
+            // Set default demo text in NLP extractor input
+            document.getElementById('nlp-input-text').value = "Exposure alert for john.cfo@acme.test in finance department with secret sec_key_123456789012345678901234 and password indicator.";
+
+            const ctxShap = document.getElementById('shapChart').getContext('2d');
+            shapChartInstance = new Chart(ctxShap, {
+                type: 'bar',
+                data: {
+                    labels: ['Privileged Role', 'Asset Criticality', 'Exposure Recency', 'CISA KEV Vuln', 'Blast Radius', 'MFA Enforced'],
+                    datasets: [{
+                        label: 'SHAP Risk Contribution (+/-)',
+                        data: [18.4, 16.8, 14.5, 13.2, 11.6, 0.0],
+                        backgroundColor: ['#dc2626', '#dc2626', '#dc2626', '#d97706', '#7c3aed', '#16a34a'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: 'rgba(0, 0, 0, 0.06)' }, ticks: { color: '#64748b' } },
+                        x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                    }
+                }
+            });
+
+            fetch('/api/v1/ablation')
+                .then(r => r.json())
+                .then(data => {
+                    const labels = Object.keys(data);
+                    const f1Scores = labels.map(k => data[k].macro_f1);
+                    const prAucs = labels.map(k => data[k].pr_auc);
+
+                    const tbody = document.getElementById('ablation-table-body');
+                    tbody.innerHTML = '';
+                    labels.forEach(model => {
+                        const m = data[model];
+                        const row = `
+                            <tr class="${model.includes('FULL') ? 'bg-sky-50 font-bold text-sky-700' : ''}">
+                                <td class="py-2.5 px-3">${model}</td>
+                                <td class="py-2.5 px-3">${m.features_used}</td>
+                                <td class="py-2.5 px-3">${m.precision}</td>
+                                <td class="py-2.5 px-3">${m.recall}</td>
+                                <td class="py-2.5 px-3 text-emerald-600 font-bold">${m.macro_f1}</td>
+                                <td class="py-2.5 px-3 text-purple-600 font-bold">${m.pr_auc}</td>
+                                <td class="py-2.5 px-3">${m.ece}</td>
+                            </tr>
+                        `;
+                        tbody.innerHTML += row;
+                    });
+
+                    const ctxAblation = document.getElementById('ablationChart').getContext('2d');
+                    new Chart(ctxAblation, {
+                        type: 'line',
+                        data: {
+                            labels: labels.map(l => l.split(' ')[0] + ' ' + l.split(' ')[1]),
+                            datasets: [
+                                {
+                                    label: 'Macro F1-Score',
+                                    data: f1Scores,
+                                    borderColor: '#16a34a',
+                                    backgroundColor: 'rgba(22, 163, 74, 0.08)',
+                                    fill: true,
+                                    tension: 0.35,
+                                    borderWidth: 3
+                                },
+                                {
+                                    label: 'PR-AUC Score',
+                                    data: prAucs,
+                                    borderColor: '#0284c7',
+                                    backgroundColor: 'rgba(2, 132, 199, 0.08)',
+                                    fill: true,
+                                    tension: 0.35,
+                                    borderWidth: 3
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { labels: { color: '#0f172a', font: { family: 'JetBrains Mono' } } } },
+                            scales: {
+                                y: { grid: { color: 'rgba(0, 0, 0, 0.06)' }, ticks: { color: '#64748b' }, min: 0.3, max: 1.0 },
+                                x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                            }
+                        }
+                    });
+                })
+                .catch(err => console.error(err));
+        });
+    </script>
+</body>
+</html>
