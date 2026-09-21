@@ -116,12 +116,17 @@ class ExposureEvent(Base):
     exposure_id = Column(String, primary_key=True, default=gen_uuid)
     organization_id = Column(String, ForeignKey("organizations.organization_id"), nullable=False)
     source_id = Column(String, ForeignKey("intelligence_sources.source_id"), nullable=True)
+    source_name = Column(String, default="HIBP / CTI Feed")
     source_event_hash = Column(String, unique=True, index=True, nullable=False)
+    exposed_entity = Column(String, nullable=False, default="cfo@acme.test")
+    exposure_date = Column(DateTime, default=utc_now)
     detected_at = Column(DateTime, default=utc_now)
     exposure_type = Column(String, nullable=False) # CREDENTIAL, API_KEY, TOKEN, PII, FINANCIAL, SOURCE_CODE
-    data_sensitivity = Column(Integer, default=8) # 1-10 scale
+    data_sensitivity = Column(Float, default=8.0) # 1-10 scale
     record_count = Column(Integer, default=1)
-    source_confidence = Column(Float, default=0.9)
+    source_credibility = Column(Float, default=0.95) # 0.0 - 1.0 (Credibility of source)
+    source_confidence = Column(Float, default=9.0) # 0 - 10 scale (Separate evidence confidence)
+    validation_status = Column(String, default="MATCHED") # MATCHED, UNMATCHED, OUT_OF_SCOPE
     relevance_score = Column(Float, default=0.8)
     status = Column(String, default="UNPROCESSED") # UNPROCESSED, CORRELATED, RESOLVED
     created_at = Column(DateTime, default=utc_now)

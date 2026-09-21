@@ -5,9 +5,9 @@ from typing import Dict, List, Any
 
 class EntityExtractor:
     """
-    Pipeline B - Entity Extraction & Sensitive Data Tokenizer
+    Pipeline B - Entity Extraction, Sensitive Data Tokenizer & Enterprise Domain Matcher
     Identifies emails, domains, credential indicators, API keys, AWS identifiers, and departments.
-    Tokenizes sensitive values using HMAC/SHA-256 to ensure no plaintext passwords/keys are retained.
+    Tokenizes sensitive values using HMAC/SHA-256 and matches against organization domains/identities.
     """
     
     EMAIL_REGEX = re.compile(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+')
@@ -22,6 +22,36 @@ class EntityExtractor:
         """Tokenize sensitive identifier into a deterministic non-reversible token."""
         h = hmac.new(self.hmac_salt, value.lower().strip().encode('utf-8'), hashlib.sha256).hexdigest()
         return f"{prefix}_{h[:12]}"
+
+    def match_enterprise_identity(
+        self,
+        identifier: str,
+        org_domains: List[str] = None,
+        db_identities: List[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Enterprise Identity Matching: Checks if ingested exposure entity belongs to organization.
+        Only matched exposures proceed to risk scoring.
+        """
+        org_domains = org_domains or ["acme.test", "company.com", "acme.internal"]
+        identifier_clean = identifier.lower().strip()
+
+        # Domain check
+        matched_by_domain = any(identifier_clean.endswith(f"@{dom}") or identifier_clean.endswith(f".{dom}") or identifier_clean == dom for dom in org_domains)
+
+        # Hash/Identifier list check
+        matched_by_db = False
+        if db_identities:
+            matched_by_db = any(identifier_clean in id_val.lower() for id_val in db_identities)
+
+        is_matched = matched_by_domain or matched_by_db
+
+        return {
+            "identifier": identifier,
+            "is_matched": is_matched,
+            "validation_status": "MATCHED" if is_matched else "UNMATCHED",
+            "match_reason": "Domain suffix match against organization assets" if matched_by_domain else ("Database identity hash match" if matched_by_db else "External entity does not belong to enterprise scope")
+        }
 
     def extract(self, raw_input: str) -> Dict[str, Any]:
         """Extract entities and return tokenized payload."""
@@ -41,7 +71,7 @@ class EntityExtractor:
         # 2. Domains
         domains = self.DOMAIN_REGEX.findall(raw_input)
         for dom in set(domains):
-            if not any(e["domain"] == dom for e in entities if "domain" in e):
+            if not any(e.get("domain") == dom for e in entities if "domain" in e):
                 entities.append({
                     "type": "DOMAIN",
                     "value": dom.lower(),

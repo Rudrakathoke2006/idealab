@@ -14,7 +14,7 @@ class BaseConnectorAdapter(ABC):
         self.config = config or {}
 
     @abstractmethod
-    def fetch_telemetry(() -> List[Dict[str, Any]]:
+    def fetch_telemetry(self) -> List[Dict[str, Any]]:
         """Fetch raw telemetry events from vendor API endpoint."""
         pass
 
