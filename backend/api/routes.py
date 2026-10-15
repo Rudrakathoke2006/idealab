@@ -320,19 +320,34 @@ def run_realtime_detection(payload: Dict[str, Any], db: Session = Depends(get_db
     blast_res = graph_engine.calculate_blast_radius(target_identity, db)
     blast_radius_factor = round(blast_res["blast_radius_score"] / 10.0, 1)
 
+    # Simulator overrides (if supplied)
+    if "asset_criticality" in payload:
+        asset_crit = float(payload["asset_criticality"])
+    if "privilege_level" in payload:
+        exploitability = float(payload["privilege_level"])
+    if "blast_radius" in payload:
+        blast_radius_factor = float(payload["blast_radius"])
+    
+    exposure_age_hours = int(payload.get("exposure_age_hours", payload.get("age_hours", 2)))
+    freshness = float(payload.get("freshness", max(1.0, min(10.0, 10.0 - (exposure_age_hours / 24.0 * 2.0)))))
+    epss_score = float(payload.get("epss_score", 0.94 if cisa_kev else 0.15))
+
     vuln_score = cvss_score if not cisa_kev else min(10.0, cvss_score + 0.5)
 
     risk_output = risk_engine.compute_risk(
         data_sensitivity=data_sens,
         exploitability=exploitability,
         asset_criticality=asset_crit,
-        freshness=9.5,
+        freshness=freshness,
         source_confidence=9.0,
         blast_radius=blast_radius_factor,
         vulnerability_score=vuln_score,
         threat_context=9.0,
         historical_score=7.0,
-        mfa_enabled=mfa_enabled
+        mfa_enabled=mfa_enabled,
+        cisa_kev=cisa_kev,
+        epss_score=epss_score,
+        exposure_age_hours=exposure_age_hours
     )
 
     xai_output = xai_engine.explain_risk(risk_output)
@@ -351,6 +366,10 @@ def run_realtime_detection(payload: Dict[str, Any], db: Session = Depends(get_db
             "severity_score": risk_output["severity_score"],
             "confidence_score": risk_output["confidence_score"],
             "confidence_level": risk_output["confidence_level"],
+            "deterministic_rule_score": risk_output.get("deterministic_rule_score"),
+            "ml_model_score": risk_output.get("ml_model_score"),
+            "calibrated_p_breach": risk_output.get("calibrated_p_breach"),
+            "uncertainty_index": risk_output.get("uncertainty_index"),
             "xai_explanations": xai_output,
             "attack_path": attack_path,
             "recommended_actions": recs
@@ -382,7 +401,8 @@ def get_graph_data(db: Session = Depends(get_db)):
     edges = []
     for u, v, data in graph_engine.G.edges(data=True):
         edges.append({"source": u, "target": v, "relationship": data.get("relationship", "CONNECTS")})
-    return {"nodes": nodes, "edges": edges}
+    choke = graph_engine.analyze_choke_points("id-cfo-01", "ast-findb-01")
+    return {"nodes": nodes, "edges": edges, "choke_point_analysis": choke}
 
 @router.get("/ablation")
 def get_ablation_metrics():
