@@ -1,0 +1,106 @@
+{
+  "model_class_comparison_10_seeds": {
+    "Rule-Only": {
+      "precision_mean": 0.0,
+      "precision_std": 0.0,
+      "recall_mean": 0.0,
+      "recall_std": 0.0,
+      "f1_mean": 0.0,
+      "f1_std": 0.0,
+      "prauc_mean": 0.0924,
+      "prauc_std": 0.0202,
+      "brier_score": 0.0528,
+      "ece_score": 0.0201
+    },
+    "Logistic Regression": {
+      "precision_mean": 0.4817,
+      "precision_std": 0.1645,
+      "recall_mean": 0.1034,
+      "recall_std": 0.0435,
+      "f1_mean": 0.1661,
+      "f1_std": 0.0635,
+      "prauc_mean": 0.3885,
+      "prauc_std": 0.0583,
+      "brier_score": 0.0391,
+      "ece_score": 0.0173
+    },
+    "Random Forest": {
+      "precision_mean": 0.0,
+      "precision_std": 0.0,
+      "recall_mean": 0.0,
+      "recall_std": 0.0,
+      "f1_mean": 0.0,
+      "f1_std": 0.0,
+      "prauc_mean": 0.3738,
+      "prauc_std": 0.05,
+      "brier_score": 0.0417,
+      "ece_score": 0.0311
+    },
+    "ML-Only (XGBoost)": {
+      "precision_mean": 0.4368,
+      "precision_std": 0.1718,
+      "recall_mean": 0.1289,
+      "recall_std": 0.0626,
+      "f1_mean": 0.1911,
+      "f1_std": 0.0828,
+      "prauc_mean": 0.377,
+      "prauc_std": 0.052,
+      "brier_score": 0.0401,
+      "ece_score": 0.0175
+    },
+    "AEGIS-X Full Hybrid": {
+      "precision_mean": 0.3833,
+      "precision_std": 0.4349,
+      "recall_mean": 0.0144,
+      "recall_std": 0.0161,
+      "f1_mean": 0.0273,
+      "f1_std": 0.0299,
+      "prauc_mean": 0.3737,
+      "prauc_std": 0.0474,
+      "brier_score": 0.0415,
+      "ece_score": 0.0368
+    }
+  },
+  "generator_shift_adversary_test": {
+    "in_distribution_v1": {
+      "macro_f1": 0.3902,
+      "pr_auc": 0.6533
+    },
+    "generator_shift_v2": {
+      "macro_f1": 0.2014,
+      "pr_auc": 0.3791
+    },
+    "f1_drop_percentage_points": 18.88,
+    "shift_conclusion": "Model experiences expected realistic degradation under evasive adversary shift, proving non-triviality."
+  },
+  "label_noise_robustness_curve": {
+    "noise_0pct": 0.2353,
+    "noise_5pct": 0.1846,
+    "noise_10pct": 0.1039,
+    "noise_15pct": 0.0988,
+    "noise_20pct": 0.1212
+  },
+  "guardrail_pareto_defense_evaluation": {
+    "Unconstrained SOAR": {
+      "total_incidents": 500,
+      "harmful_automatic_actions": 150,
+      "harmful_action_rate_pct": 100.0,
+      "containment_success_pct": 100.0,
+      "manual_review_count": 0
+    },
+    "Static Exclusion List": {
+      "total_incidents": 500,
+      "harmful_automatic_actions": 75,
+      "harmful_action_rate_pct": 50.0,
+      "containment_success_pct": 100.0,
+      "manual_review_count": 0
+    },
+    "AEGIS-X Safe Gated Policy": {
+      "total_incidents": 500,
+      "harmful_automatic_actions": 0,
+      "harmful_action_rate_pct": 0.0,
+      "containment_success_pct": 100.0,
+      "manual_review_count": 150
+    }
+  }
+}

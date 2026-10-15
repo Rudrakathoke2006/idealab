@@ -1,27 +1,41 @@
 import re
 import hmac
 import hashlib
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 class EntityExtractor:
     """
-    Pipeline B - Entity Extraction, Sensitive Data Tokenizer & Enterprise Domain Matcher
-    Identifies emails, domains, credential indicators, API keys, AWS identifiers, and departments.
-    Tokenizes sensitive values using HMAC/SHA-256 and matches against organization domains/identities.
+    Pipeline B - Entity Extraction, Sensitive Data Pseudonymization & Domain Matching
+    
+    Academic Defenses:
+      1. Domain-Spoofing Immunity: Strict host boundary matching (rejects lookalikes like acme.test.evil.com).
+      2. Plus-Addressing Normalization: Normalizes aliases (cfo+alert@domain.com -> cfo@domain.com).
+      3. Irreversible Pseudonymization: HMAC-SHA256 tokenization with configurable salt.
+      4. Tenant-Aware Organization Scope Matching.
     """
     
-    EMAIL_REGEX = re.compile(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+')
+    EMAIL_REGEX = re.compile(r'\b[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\b')
     DOMAIN_REGEX = re.compile(r'\b(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}\b')
     API_KEY_REGEX = re.compile(r'\b(?:sec_key_[0-9a-zA-Z]{24}|akia[0-9a-z]{16}|eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+)\b', re.IGNORECASE)
-    DEPARTMENTS = ["finance", "hr", "engineering", "sales", "operations", "exec", "cfo", "it"]
+    DEPARTMENTS = ["finance", "hr", "engineering", "sales", "operations", "executive", "it", "security"]
 
     def __init__(self, hmac_salt: str = "aegis_x_token_salt_2026"):
         self.hmac_salt = hmac_salt.encode('utf-8')
 
     def tokenize(self, value: str, prefix: str = "tok") -> str:
-        """Tokenize sensitive identifier into a deterministic non-reversible token."""
+        """Pseudonymize sensitive identifier into a deterministic non-reversible token."""
         h = hmac.new(self.hmac_salt, value.lower().strip().encode('utf-8'), hashlib.sha256).hexdigest()
-        return f"{prefix}_{h[:12]}"
+        return f"{prefix}_{h[:16]}"
+
+    def normalize_email(self, email: str) -> str:
+        """Strip plus-addressing and lowercase email."""
+        clean = email.lower().strip()
+        if "@" in clean:
+            local, domain = clean.split("@", 1)
+            if "+" in local:
+                local = local.split("+")[0]
+            clean = f"{local}@{domain}"
+        return clean
 
     def match_enterprise_identity(
         self,
@@ -30,40 +44,64 @@ class EntityExtractor:
         db_identities: List[str] = None
     ) -> Dict[str, Any]:
         """
-        Enterprise Identity Matching: Checks if ingested exposure entity belongs to organization.
-        Only matched exposures proceed to risk scoring.
+        Enterprise Identity Matching with Strict Domain Boundary Defense.
+        Prevents subdomain spoofing (e.g. 'cfo@acme.test.attacker.com' will NOT match 'acme.test').
         """
-        org_domains = org_domains or ["acme.test", "company.com", "acme.internal"]
-        identifier_clean = identifier.lower().strip()
+        org_domains = [d.lower().strip() for d in (org_domains or ["acme.test", "company.com", "acme.internal"])]
+        identifier_clean = self.normalize_email(identifier)
 
-        # Domain check
-        matched_by_domain = any(identifier_clean.endswith(f"@{dom}") or identifier_clean.endswith(f".{dom}") or identifier_clean == dom for dom in org_domains)
+        matched_by_domain = False
+        matched_domain = None
 
-        # Hash/Identifier list check
+        if "@" in identifier_clean:
+            ident_domain = identifier_clean.split("@")[-1]
+            for dom in org_domains:
+                # Exact domain match OR strict enterprise subdomain match (e.g. dept.acme.test)
+                if ident_domain == dom or ident_domain.endswith(f".{dom}"):
+                    matched_by_domain = True
+                    matched_domain = dom
+                    break
+        else:
+            # Domain-only identifier
+            for dom in org_domains:
+                if identifier_clean == dom or identifier_clean.endswith(f".{dom}"):
+                    matched_by_domain = True
+                    matched_domain = dom
+                    break
+
+        # Check DB identity list if provided
         matched_by_db = False
         if db_identities:
-            matched_by_db = any(identifier_clean in id_val.lower() for id_val in db_identities)
+            matched_by_db = any(identifier_clean == self.normalize_email(id_val) for id_val in db_identities)
 
         is_matched = matched_by_domain or matched_by_db
 
         return {
             "identifier": identifier,
+            "normalized_identifier": identifier_clean,
             "is_matched": is_matched,
             "validation_status": "MATCHED" if is_matched else "UNMATCHED",
-            "match_reason": "Domain suffix match against organization assets" if matched_by_domain else ("Database identity hash match" if matched_by_db else "External entity does not belong to enterprise scope")
+            "matched_domain": matched_domain,
+            "match_reason": (
+                f"Strict enterprise domain boundary match on '{matched_domain}'"
+                if matched_by_domain
+                else ("Database identity hash match" if matched_by_db else "Entity does not belong to authorized tenant scope")
+            )
         }
 
     def extract(self, raw_input: str) -> Dict[str, Any]:
-        """Extract entities and return tokenized payload."""
+        """Extract entities and return pseudonymized payload."""
         entities: List[Dict[str, Any]] = []
 
         # 1. Emails
         emails = self.EMAIL_REGEX.findall(raw_input)
         for email in set(emails):
-            domain = email.split('@')[-1]
+            norm = self.normalize_email(email)
+            domain = norm.split('@')[-1]
             entities.append({
                 "type": "EMAIL",
-                "token": self.tokenize(email, "e"),
+                "raw_preview": f"{norm[:3]}***@{domain}",
+                "token": self.tokenize(norm, "e"),
                 "domain": domain,
                 "confidence": 0.98
             })
@@ -71,10 +109,11 @@ class EntityExtractor:
         # 2. Domains
         domains = self.DOMAIN_REGEX.findall(raw_input)
         for dom in set(domains):
-            if not any(e.get("domain") == dom for e in entities if "domain" in e):
+            dom_clean = dom.lower()
+            if not any(e.get("domain") == dom_clean for e in entities if "domain" in e):
                 entities.append({
                     "type": "DOMAIN",
-                    "value": dom.lower(),
+                    "value": dom_clean,
                     "confidence": 0.95
                 })
 
@@ -88,15 +127,7 @@ class EntityExtractor:
                 "confidence": 0.99
             })
 
-        # 4. Password / Credential Indicators
-        if any(term in raw_input.lower() for term in ["password", "passhash", "shadow", "auth_secret", "ntlm"]):
-            entities.append({
-                "type": "SECRET_TYPE",
-                "value": "password",
-                "confidence": 0.90
-            })
-
-        # 5. Department Mapping
+        # 4. Department Mapping
         for dept in self.DEPARTMENTS:
             if dept in raw_input.lower():
                 entities.append({

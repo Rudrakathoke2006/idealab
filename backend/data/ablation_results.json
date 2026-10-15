@@ -1,66 +1,62 @@
 {
-  "Model A (Sensitivity Only)": {
-    "features_used": 1,
-    "precision": 0.0,
-    "recall": 0.0,
-    "macro_f1": 0.0,
-    "pr_auc": 0.3935,
-    "ece": 0.0308
+  "Rule-Only": {
+    "precision_mean": 0.0,
+    "precision_std": 0.0,
+    "recall_mean": 0.0,
+    "recall_std": 0.0,
+    "f1_mean": 0.0,
+    "f1_std": 0.0,
+    "prauc_mean": 0.0924,
+    "prauc_std": 0.0202,
+    "brier_score": 0.0528,
+    "ece_score": 0.0201
   },
-  "Model B (+ Exploitability)": {
-    "features_used": 3,
-    "precision": 0.5128,
-    "recall": 0.25,
-    "macro_f1": 0.3361,
-    "pr_auc": 0.4651,
-    "ece": 0.0373
+  "Logistic Regression": {
+    "precision_mean": 0.4817,
+    "precision_std": 0.1645,
+    "recall_mean": 0.1034,
+    "recall_std": 0.0435,
+    "f1_mean": 0.1661,
+    "f1_std": 0.0635,
+    "prauc_mean": 0.3885,
+    "prauc_std": 0.0583,
+    "brier_score": 0.0391,
+    "ece_score": 0.0173
   },
-  "Model C (+ Asset Criticality)": {
-    "features_used": 4,
-    "precision": 0.6909,
-    "recall": 0.475,
-    "macro_f1": 0.563,
-    "pr_auc": 0.6562,
-    "ece": 0.0503
+  "Random Forest": {
+    "precision_mean": 0.0,
+    "precision_std": 0.0,
+    "recall_mean": 0.0,
+    "recall_std": 0.0,
+    "f1_mean": 0.0,
+    "f1_std": 0.0,
+    "prauc_mean": 0.3738,
+    "prauc_std": 0.05,
+    "brier_score": 0.0417,
+    "ece_score": 0.0311
   },
-  "Model D (+ Vuln Intel KEV)": {
-    "features_used": 6,
-    "precision": 0.6613,
-    "recall": 0.5125,
-    "macro_f1": 0.5775,
-    "pr_auc": 0.7088,
-    "ece": 0.0371
+  "ML-Only (XGBoost)": {
+    "precision_mean": 0.4368,
+    "precision_std": 0.1718,
+    "recall_mean": 0.1289,
+    "recall_std": 0.0626,
+    "f1_mean": 0.1911,
+    "f1_std": 0.0828,
+    "prauc_mean": 0.377,
+    "prauc_std": 0.052,
+    "brier_score": 0.0401,
+    "ece_score": 0.0175
   },
-  "Model E (+ Behavioral Context)": {
-    "features_used": 7,
-    "precision": 0.6885,
-    "recall": 0.525,
-    "macro_f1": 0.5957,
-    "pr_auc": 0.7067,
-    "ece": 0.0413
-  },
-  "Model F (+ Blast Radius)": {
-    "features_used": 8,
-    "precision": 0.7097,
-    "recall": 0.55,
-    "macro_f1": 0.6197,
-    "pr_auc": 0.7294,
-    "ece": 0.0277
-  },
-  "Model G (+ Temporal Features)": {
-    "features_used": 9,
-    "precision": 0.75,
-    "recall": 0.525,
-    "macro_f1": 0.6176,
-    "pr_auc": 0.7304,
-    "ece": 0.0346
-  },
-  "Model H (FULL HYBRID MODEL)": {
-    "features_used": 14,
-    "precision": 0.8939,
-    "recall": 0.7375,
-    "macro_f1": 0.8082,
-    "pr_auc": 0.932,
-    "ece": 0.0376
+  "AEGIS-X Full Hybrid": {
+    "precision_mean": 0.3833,
+    "precision_std": 0.4349,
+    "recall_mean": 0.0144,
+    "recall_std": 0.0161,
+    "f1_mean": 0.0273,
+    "f1_std": 0.0299,
+    "prauc_mean": 0.3737,
+    "prauc_std": 0.0474,
+    "brier_score": 0.0415,
+    "ece_score": 0.0368
   }
 }
