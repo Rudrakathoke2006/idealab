@@ -303,6 +303,7 @@ class AuditEvent(Base):
 
     audit_id = Column(String, primary_key=True, default=gen_uuid)
     organization_id = Column(String, nullable=False)
+    tenant_id = Column(String, index=True, nullable=True)
     actor_id = Column(String, nullable=False)
     action = Column(String, nullable=False) # INCIDENT_CLOSED, SEVERITY_CHANGED, PLAYBOOK_EXECUTED
     resource_type = Column(String, nullable=False)
@@ -311,8 +312,25 @@ class AuditEvent(Base):
     ip_hash = Column(String, nullable=False)
     timestamp = Column(DateTime, default=utc_now)
     
-    # Hash Chaining cryptographic fields
+    # Hash Chaining & RFC 9162 Merkle log fields
+    leaf_index = Column(Integer, nullable=True)
+    leaf_hash = Column(String, nullable=True)
+    payload_json = Column(JSON, nullable=True)
     before_hash = Column(String, nullable=True)
     after_hash = Column(String, nullable=True)
     previous_event_hash = Column(String, nullable=False)
     event_hash = Column(String, nullable=False)
+
+class SignedTreeHead(Base):
+    __tablename__ = "signed_tree_heads"
+
+    sth_id = Column(String, primary_key=True, default=gen_uuid)
+    tenant_id = Column(String, index=True, nullable=False)
+    tree_size = Column(Integer, nullable=False)
+    root_hash = Column(String, nullable=False)
+    timestamp = Column(Integer, nullable=False) # Unix epoch seconds
+    ed25519_signature = Column(String, nullable=False)
+    pq_algorithm = Column(String, default="ML-DSA-65")
+    pq_signature = Column(String, nullable=False)
+    created_at = Column(DateTime, default=utc_now)
+

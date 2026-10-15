@@ -8,6 +8,8 @@ from backend.models import (
     IntelligenceSource, Vulnerability, AssetVulnerability, AuditEvent
 )
 
+from sqlalchemy import text
+
 def hash_pass(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
@@ -16,12 +18,33 @@ def hash_identifier(identifier: str) -> str:
 
 def init_db():
     Base.metadata.create_all(bind=engine)
+    
+    # Ensure SQLite columns exist if DB was created before schema expansion
+    with engine.connect() as conn:
+        for col, col_type in [
+            ("tenant_id", "VARCHAR"),
+            ("leaf_index", "INTEGER"),
+            ("leaf_hash", "VARCHAR"),
+            ("payload_json", "JSON")
+        ]:
+            try:
+                conn.execute(text(f"ALTER TABLE audit_events ADD COLUMN {col} {col_type}"))
+                conn.commit()
+            except Exception:
+                pass
+        try:
+            conn.execute(text("UPDATE audit_events SET tenant_id = organization_id WHERE tenant_id IS NULL"))
+            conn.commit()
+        except Exception:
+            pass
+
     db = SessionLocal()
 
     # Check if existing seed exists
     if db.query(Organization).first():
         db.close()
         return
+
 
     # 1. Organization
     org = Organization(
