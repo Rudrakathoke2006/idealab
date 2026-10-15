@@ -1,0 +1,94 @@
+services:
+  # ---------------------------------------------------------------------------
+  # 1. AEGIS-X FastAPI Application Backend & Web UI
+  # ---------------------------------------------------------------------------
+  aegis-api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: aegis_x_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./aegis_x.db
+      - AEGIS_MESSAGING_ENABLED=true
+      - AEGIS_PUBLIC_URL=https://app.aegis-x.internal
+      - MATRIX_HOMESERVER_URL=https://chat.aegis-x.internal
+      - MATRIX_SERVER_NAME=chat.aegis-x.internal
+      - MESSAGING_ALLOW_CROSS_TENANT=false
+      - MESSAGING_REQUIRE_DEVICE_VERIFICATION=true
+    volumes:
+      - ../aegis_x.db:/app/aegis_x.db
+    depends_on:
+      - synapse
+    networks:
+      - aegis_net
+
+  # ---------------------------------------------------------------------------
+  # 2. Matrix Synapse Homeserver (Zero-Plaintext Encrypted Event Relay)
+  # ---------------------------------------------------------------------------
+  synapse:
+    image: matrixdotorg/synapse:latest
+    container_name: aegis_x_synapse
+    restart: unless-stopped
+    ports:
+      - "8008:8008"
+    environment:
+      - SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
+    volumes:
+      - ./synapse/homeserver.yaml:/data/homeserver.yaml:ro
+      - synapse_data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - aegis_net
+
+  # ---------------------------------------------------------------------------
+  # 3. Dedicated PostgreSQL for Matrix Synapse
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: aegis_x_matrix_db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=synapse
+      - POSTGRES_USER=synapse_user
+      - POSTGRES_PASSWORD=synapse_secure_db_pass_2026
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U synapse_user -d synapse"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aegis_net
+
+  # ---------------------------------------------------------------------------
+  # 4. Reverse Proxy / TLS Termination (Nginx)
+  # ---------------------------------------------------------------------------
+  reverse-proxy:
+    image: nginx:alpine
+    container_name: aegis_x_proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./reverse-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - aegis-api
+      - synapse
+    networks:
+      - aegis_net
+
+volumes:
+  synapse_data:
+  postgres_data:
+
+networks:
+  aegis_net:
+    driver: bridge

@@ -1,6 +1,6 @@
 import uuid
 import datetime
-from sqlalchemy import Column, String, Integer, Float, Boolean, DateTime, ForeignKey, Text, JSON
+from sqlalchemy import Column, String, Integer, Float, Boolean, DateTime, ForeignKey, Text, JSON, UniqueConstraint
 from sqlalchemy.orm import relationship
 from backend.database import Base
 
@@ -333,4 +333,98 @@ class SignedTreeHead(Base):
     pq_algorithm = Column(String, default="ML-DSA-65")
     pq_signature = Column(String, nullable=False)
     created_at = Column(DateTime, default=utc_now)
+
+
+# ============================================================================
+# AEGIS-X SECURE MESSAGING DATA MODELS (Matrix / E2EE Architecture)
+# Strictly adheres to Zero-Plaintext Rule: NO message contents or private keys
+# ============================================================================
+
+class MessagingIdentity(Base):
+    """
+    Connects an authenticated AEGIS-X user to a Matrix identity.
+    Crucial: Never stores Matrix access tokens, private device keys, or recovery secrets.
+    """
+    __tablename__ = "messaging_identities"
+
+    id = Column(String, primary_key=True, default=gen_uuid)
+    tenant_id = Column(String, ForeignKey("organizations.organization_id"), nullable=False, index=True)
+    user_id = Column(String, ForeignKey("users.user_id"), nullable=False, index=True)
+    matrix_user_id = Column(String, unique=True, nullable=False, index=True)
+    enabled = Column(Boolean, default=True)
+    provisioning_status = Column(String, default="ACTIVE")  # PENDING, ACTIVE, SUSPENDED, FAILED
+    created_at = Column(DateTime, default=utc_now)
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
+
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "user_id", name="uq_messaging_identities_tenant_user"),
+    )
+
+    organization = relationship("Organization")
+    user = relationship("User")
+
+
+class MessagingRoomLink(Base):
+    """
+    Stores references to Matrix rooms associated with AEGIS-X incidents.
+    A link records that a room is associated with an incident; it does not store message plaintext.
+    """
+    __tablename__ = "messaging_room_links"
+
+    id = Column(String, primary_key=True, default=gen_uuid)
+    tenant_id = Column(String, ForeignKey("organizations.organization_id"), nullable=False, index=True)
+    matrix_room_id = Column(String, nullable=False, index=True)
+    room_type = Column(String, default="INCIDENT")  # DIRECT or INCIDENT
+    incident_id = Column(String, ForeignKey("incidents.incident_id"), nullable=True, index=True)
+    created_by_user_id = Column(String, ForeignKey("users.user_id"), nullable=False)
+    policy_version = Column(String, default="messaging-policy-v1")
+    created_at = Column(DateTime, default=utc_now)
+    archived_at = Column(DateTime, nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "matrix_room_id", name="uq_messaging_room_links_tenant_room"),
+    )
+
+    organization = relationship("Organization")
+    incident = relationship("Incident")
+    created_by_user = relationship("User")
+
+
+class MessagingPolicy(Base):
+    """
+    Tenant-level organizational messaging security policies.
+    """
+    __tablename__ = "messaging_policies"
+
+    id = Column(String, primary_key=True, default=gen_uuid)
+    tenant_id = Column(String, ForeignKey("organizations.organization_id"), unique=True, nullable=False, index=True)
+    messaging_enabled = Column(Boolean, default=True)
+    direct_messages_enabled = Column(Boolean, default=True)
+    incident_rooms_enabled = Column(Boolean, default=True)
+    require_device_verification = Column(Boolean, default=True)
+    allow_cross_tenant = Column(Boolean, default=False)
+    policy_version = Column(String, default="messaging-policy-v1")
+    updated_at = Column(DateTime, default=utc_now, onupdate=utc_now)
+
+    organization = relationship("Organization")
+
+
+class MessagingSecurityEvent(Base):
+    """
+    Privacy-conscious audit trail for messaging security events (access denied, room linked, policy failures).
+    NEVER records plaintext messages, encryption keys, passwords, or raw ciphertext.
+    """
+    __tablename__ = "messaging_security_events"
+
+    id = Column(String, primary_key=True, default=gen_uuid)
+    tenant_id = Column(String, ForeignKey("organizations.organization_id"), nullable=False, index=True)
+    actor_user_id = Column(String, ForeignKey("users.user_id"), nullable=True)
+    event_type = Column(String, nullable=False)  # e.g., ACCESS_DENIED, USER_SUSPENDED, ROOM_LINKED, DEVICE_POLICY_FAILURE, CANARY_AUDIT_PASSED
+    room_id_hash = Column(String, nullable=True)  # Pseudonymous SHA-256 room reference
+    request_id = Column(String, default=gen_uuid)
+    details_json = Column(JSON, nullable=True)  # Strictly sanitized allowlist metadata only
+    created_at = Column(DateTime, default=utc_now)
+
+    organization = relationship("Organization")
+    actor = relationship("User")
 

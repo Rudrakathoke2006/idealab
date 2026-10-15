@@ -1,0 +1,69 @@
+# ============================================================================
+# AEGIS-X Matrix Synapse Homeserver Configuration
+# Dedicated End-to-End Encrypted Event Relay
+# ============================================================================
+
+server_name: "chat.aegis-x.internal"
+pid_file: /data/homeserver.pid
+
+# Listeners
+listeners:
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true
+    resources:
+      - names: [client, federation]
+        compress: true
+
+# Database: Dedicated PostgreSQL
+database:
+  name: psycopg2
+  args:
+    user: synapse_user
+    password: synapse_secure_db_pass_2026
+    database: synapse
+    host: postgres
+    port: 5432
+    cp_min: 5
+    cp_max: 20
+
+# Zero-Plaintext Security & Federation Isolation
+federation_domain_whitelist: []
+enable_federation: false
+federation_verify_certificates: false
+
+# User Registration: Controlled strictly via AEGIS-X Identity Provider
+enable_registration: false
+enable_registration_without_verification: false
+registration_shared_secret: "aegis_x_synapse_reg_secret_change_in_prod"
+
+# End-to-End Encryption Configuration
+encryption:
+  # Enable Megolm / Olm E2EE by default
+  enabled: true
+
+# CORS: Strictly restrict to AEGIS-X web frontend origin
+enable_cors: true
+cors_origins:
+  - "https://app.aegis-x.internal"
+  - "http://localhost:8000"
+  - "http://localhost:5173"
+
+# URL preview disabled to prevent data exfiltration
+url_preview_enabled: false
+
+# Retention & Redaction Policy
+retention:
+  enabled: true
+  default_policy:
+    min_lifetime: 1d
+    max_lifetime: 90d
+
+# Media Store
+media_store_path: /data/media_store
+max_upload_size: 10M
+
+# Key Generation
+signing_key_path: "/data/chat.aegis-x.internal.signing.key"
+report_stats: false

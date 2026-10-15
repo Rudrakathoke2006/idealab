@@ -945,3 +945,30 @@ def verify_incident_explanation(id: str, db: Session = Depends(get_db)):
         "verification_status": "AUTHENTIC_UNMODIFIED" if verified else "TAMPERED_EXPLANATION"
     }
 
+
+# ---------------------------------------------------------------------------
+# AEGIS-X Secure Messaging: Direct Incident Room Metadata Route Alias
+# ---------------------------------------------------------------------------
+@router.get("/incidents/{incident_id}/messaging-room")
+def get_incident_messaging_room_direct(
+    incident_id: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Direct alias for retrieving incident messaging room reference.
+    """
+    from backend.messaging.room_link_service import room_link_service
+    from backend.models import Incident
+    incident = db.query(Incident).filter(Incident.incident_id == incident_id).first()
+    if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+    
+    meta = room_link_service.get_incident_room(
+        db=db,
+        tenant_id=incident.organization_id,
+        user_id="system",
+        incident_id=incident_id
+    )
+    return meta
+
+

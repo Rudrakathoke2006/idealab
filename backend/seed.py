@@ -5,7 +5,8 @@ import datetime
 from backend.database import engine, Base, SessionLocal
 from backend.models import (
     Organization, User, Asset, AssetDependency, Identity, IdentityAssetAccess,
-    IntelligenceSource, Vulnerability, AssetVulnerability, AuditEvent
+    IntelligenceSource, Vulnerability, AssetVulnerability, AuditEvent,
+    MessagingIdentity, MessagingRoomLink, MessagingPolicy, MessagingSecurityEvent
 )
 
 from sqlalchemy import text
@@ -40,8 +41,44 @@ def init_db():
 
     db = SessionLocal()
 
+    def seed_messaging_defaults(tenant_id="org-acme-fintech-01"):
+        # Ensure default messaging policy
+        policy = db.query(MessagingPolicy).filter(MessagingPolicy.tenant_id == tenant_id).first()
+        if not policy:
+            policy = MessagingPolicy(
+                tenant_id=tenant_id,
+                messaging_enabled=True,
+                direct_messages_enabled=True,
+                incident_rooms_enabled=True,
+                require_device_verification=True,
+                allow_cross_tenant=False,
+                policy_version="messaging-policy-v1"
+            )
+            db.add(policy)
+            db.commit()
+
+        # Ensure default messaging identities for existing users
+        default_mappings = [
+            ("usr-admin-01", "@admin_01:chat.aegis-x.internal"),
+            ("usr-soc-01", "@analyst_soc_01:chat.aegis-x.internal")
+        ]
+        for uid, mx_id in default_mappings:
+            u = db.query(User).filter(User.user_id == uid).first()
+            if u:
+                m_ident = db.query(MessagingIdentity).filter(MessagingIdentity.user_id == uid).first()
+                if not m_ident:
+                    db.add(MessagingIdentity(
+                        tenant_id=u.organization_id,
+                        user_id=u.user_id,
+                        matrix_user_id=mx_id,
+                        enabled=True,
+                        provisioning_status="ACTIVE"
+                    ))
+        db.commit()
+
     # Check if existing seed exists
     if db.query(Organization).first():
+        seed_messaging_defaults("org-acme-fintech-01")
         db.close()
         return
 
@@ -194,6 +231,7 @@ def init_db():
         event_hash=hashlib.sha256(b"AEGIS_X_INITIAL_GENESIS_BLOCK_2026").hexdigest()
     )
     db.add(init_audit)
+    seed_messaging_defaults(org.organization_id)
 
     db.commit()
     db.close()

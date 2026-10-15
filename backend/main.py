@@ -7,6 +7,7 @@ from backend.config import settings
 from backend.database import engine, Base
 from backend.seed import init_db
 from backend.api.routes import router
+from backend.api.messaging_routes import router as messaging_router
 
 # Initialize Database Schema & Seed Data
 init_db()
@@ -26,6 +27,7 @@ app.add_middleware(
 )
 
 app.include_router(router, prefix=settings.API_V1_STR)
+app.include_router(messaging_router, prefix=settings.API_V1_STR)
 
 # Serve Frontend SPA
 frontend_path = os.path.abspath("frontend")
