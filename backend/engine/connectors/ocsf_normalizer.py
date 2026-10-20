@@ -51,7 +51,7 @@ class OCSFNormalizer:
                 "email_addr": identity,
                 "type": "User Account"
             },
-            "time": datetime.datetime.utcnow().isoformat() + "Z"
+            "time": datetime.datetime.now(datetime.timezone.utc).isoformat()
         }
         return event
 
@@ -81,7 +81,7 @@ class OCSFNormalizer:
                     "affected_asset": asset_name
                 }
             ],
-            "time": datetime.datetime.utcnow().isoformat() + "Z"
+            "time": datetime.datetime.now(datetime.timezone.utc).isoformat()
         }
         return event
 

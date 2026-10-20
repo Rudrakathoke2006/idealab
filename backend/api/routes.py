@@ -238,7 +238,7 @@ def ingest_exposure_event(payload: Dict[str, Any], db: Session = Depends(get_db)
     validation_status = matching_res["validation_status"]
 
     # 3. Store Exposure Event in DB
-    event_hash = hashlib.sha256(f"{target_entity}:{source}:{datetime.datetime.utcnow().timestamp()}".encode()).hexdigest()
+    event_hash = hashlib.sha256(f"{target_entity}:{source}:{datetime.datetime.now(datetime.timezone.utc).timestamp()}".encode()).hexdigest()
     exp_record = ExposureEvent(
         organization_id="org-acme-fintech-01",
         source_name=source,
@@ -363,7 +363,7 @@ def run_realtime_detection(payload: Dict[str, Any], db: Session = Depends(get_db
 
     return {
         "status": "DETECTION_COMPLETE",
-        "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "detection_event": {
             "telemetry_type": telemetry_type,
             "target_identity": target_identity,
@@ -514,7 +514,7 @@ def verify_merkle_proof(payload: Dict[str, Any]):
         "is_valid": valid,
         "verification_status": "VERIFIED_AUTHENTIC" if valid else "INVALID_PROOF",
         "rfc9162_compliant": True,
-        "timestamp": datetime.datetime.utcnow().isoformat() + "Z"
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat()
     }
 
 
@@ -837,7 +837,7 @@ def get_audit_offline_bundle(tenant: str, db: Session = Depends(get_db)):
 
     return {
         "tenant_id": tenant,
-        "exported_at": datetime.datetime.utcnow().isoformat() + "Z",
+        "exported_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "public_keys": {
             "ed25519_public_hex": hybrid_signer.classical_public_key_hex,
             "pq_public_hex": hybrid_signer.post_quantum_public_key_hex,
@@ -866,7 +866,7 @@ def export_tenant_data_hybrid_encrypted(tenant: str, payload: Optional[Dict[str,
 
     plaintext_dict = {
         "tenant_id": tenant,
-        "export_timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+        "export_timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "total_incidents": len(incidents),
         "total_audit_events": len(events),
         "payload": payload or {"scope": "FULL_FORENSIC_EXPORT"}

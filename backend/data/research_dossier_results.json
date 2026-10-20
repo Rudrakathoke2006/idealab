@@ -1,0 +1,644 @@
+{
+  "metadata": {
+    "platform": "AEGIS-X Research Core",
+    "date": "2026-10-16",
+    "version": "2.1.0-research",
+    "venue_target": "AI-SEC 2027 / SVCC 2027 / IEEE Access"
+  },
+  "table_iv_vulnerability_baselines": {
+    "CVSS only": {
+      "pr_auc": 0.7751,
+      "precision_at_5": 0.8,
+      "brier_score": 0.3476
+    },
+    "EPSS only": {
+      "pr_auc": 1.0,
+      "precision_at_5": 1.0,
+      "brier_score": 0.0028
+    },
+    "KEV only": {
+      "pr_auc": 1.0,
+      "precision_at_5": 1.0,
+      "brier_score": 0.0
+    },
+    "EPSS + KEV": {
+      "pr_auc": 1.0,
+      "precision_at_5": 1.0,
+      "brier_score": 0.0007
+    },
+    "AEGIS-X Factor V": {
+      "pr_auc": 1.0,
+      "precision_at_5": 1.0,
+      "brier_score": 0.0059
+    }
+  },
+  "table_v_lanl_graph_ranking": {
+    "Out-Degree": {
+      "roc_auc": 0.7914,
+      "pr_auc": 0.4883,
+      "precision_at_10": 0.6
+    },
+    "PageRank": {
+      "roc_auc": 0.5,
+      "pr_auc": 0.0833,
+      "precision_at_10": 0.0
+    },
+    "Reachable Nodes": {
+      "roc_auc": 0.7605,
+      "pr_auc": 0.4883,
+      "precision_at_10": 0.6
+    },
+    "LMSK/BREK": {
+      "roc_auc": 0.7605,
+      "pr_auc": 0.4883,
+      "precision_at_10": 0.6
+    },
+    "AEGIS-X Impact I(i)": {
+      "roc_auc": 0.7614,
+      "pr_auc": 0.5098,
+      "precision_at_10": 0.6
+    }
+  },
+  "table_vi_guide_triage_benchmark": {
+    "Rule-Only": {
+      "pr_auc": 0.8363,
+      "roc_auc": 0.9503,
+      "macro_f1": 0.6,
+      "precision_at_20": 1.0,
+      "brier_score": 0.1601
+    },
+    "Logistic Regression": {
+      "pr_auc": 0.9692,
+      "roc_auc": 0.9918,
+      "macro_f1": 0.8876,
+      "precision_at_20": 1.0,
+      "brier_score": 0.0293
+    },
+    "Random Forest": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "macro_f1": 1.0,
+      "precision_at_20": 1.0,
+      "brier_score": 0.0035
+    },
+    "ML-Only (XGBoost)": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "macro_f1": 1.0,
+      "precision_at_20": 1.0,
+      "brier_score": 0.0
+    },
+    "AEGIS-X Hybrid": {
+      "pr_auc": 1.0,
+      "roc_auc": 1.0,
+      "macro_f1": 1.0,
+      "precision_at_20": 1.0,
+      "brier_score": 0.0262
+    },
+    "LEAKAGE_AUDIT": {
+      "shuffled_label_roc_auc": 0.579,
+      "unshuffled_roc_auc": 1.0,
+      "collapses_to_chance": true,
+      "status": "PASSED: Performance collapses under label permutation."
+    }
+  },
+  "table_ii_rq2_poisoning_defense_matrix": {
+    "S1_random": {
+      "B0_auto_execute": {
+        "disruption_mean": 20.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          20.0,
+          20.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 75
+      },
+      "B1_static_name_list": {
+        "disruption_mean": 20.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          20.0,
+          20.0
+        ],
+        "remediation_mean_pct": 70.1,
+        "total_t0_violations": 0
+      },
+      "B2_score_corroboration": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 70
+      },
+      "B3_rate_limit_only": {
+        "disruption_mean": 1.8,
+        "disruption_std": 1.17,
+        "disruption_ci95": [
+          0.23,
+          3.78
+        ],
+        "remediation_mean_pct": 8.9,
+        "total_t0_violations": 6
+      },
+      "B4_proposed_guardrail": {
+        "disruption_mean": 10.6,
+        "disruption_std": 1.11,
+        "disruption_ci95": [
+          9.22,
+          12.78
+        ],
+        "remediation_mean_pct": 74.9,
+        "total_t0_violations": 0
+      },
+      "B5_recommend_only": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 0.0,
+        "total_t0_violations": 0
+      }
+    },
+    "S2_high_impact": {
+      "B0_auto_execute": {
+        "disruption_mean": 100.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          100.0,
+          100.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 261
+      },
+      "B1_static_name_list": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 71.9,
+        "total_t0_violations": 0
+      },
+      "B2_score_corroboration": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 75
+      },
+      "B3_rate_limit_only": {
+        "disruption_mean": 8.0,
+        "disruption_std": 4.0,
+        "disruption_ci95": [
+          1.12,
+          13.88
+        ],
+        "remediation_mean_pct": 7.6,
+        "total_t0_violations": 20
+      },
+      "B4_proposed_guardrail": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 73.6,
+        "total_t0_violations": 0
+      },
+      "B5_recommend_only": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 0.0,
+        "total_t0_violations": 0
+      }
+    },
+    "S3_service_accounts": {
+      "B0_auto_execute": {
+        "disruption_mean": 60.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          60.0,
+          60.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 75
+      },
+      "B1_static_name_list": {
+        "disruption_mean": 60.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          60.0,
+          60.0
+        ],
+        "remediation_mean_pct": 66.9,
+        "total_t0_violations": 0
+      },
+      "B2_score_corroboration": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 59
+      },
+      "B3_rate_limit_only": {
+        "disruption_mean": 4.5,
+        "disruption_std": 2.42,
+        "disruption_ci95": [
+          0.68,
+          8.33
+        ],
+        "remediation_mean_pct": 7.1,
+        "total_t0_violations": 6
+      },
+      "B4_proposed_guardrail": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 67.0,
+        "total_t0_violations": 0
+      },
+      "B5_recommend_only": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 0.0,
+        "total_t0_violations": 0
+      }
+    },
+    "S4_alias_bypass": {
+      "B0_auto_execute": {
+        "disruption_mean": 72.0,
+        "disruption_std": 8.0,
+        "disruption_ci95": [
+          57.8,
+          83.1
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 276
+      },
+      "B1_static_name_list": {
+        "disruption_mean": 49.7,
+        "disruption_std": 12.44,
+        "disruption_ci95": [
+          27.48,
+          70.85
+        ],
+        "remediation_mean_pct": 68.4,
+        "total_t0_violations": 161
+      },
+      "B2_score_corroboration": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 77
+      },
+      "B3_rate_limit_only": {
+        "disruption_mean": 6.3,
+        "disruption_std": 5.48,
+        "disruption_ci95": [
+          0.23,
+          17.75
+        ],
+        "remediation_mean_pct": 7.8,
+        "total_t0_violations": 27
+      },
+      "B4_proposed_guardrail": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 72.5,
+        "total_t0_violations": 0
+      },
+      "B5_recommend_only": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 0.0,
+        "total_t0_violations": 0
+      }
+    },
+    "S5_forged_credibility": {
+      "B0_auto_execute": {
+        "disruption_mean": 100.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          100.0,
+          100.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 276
+      },
+      "B1_static_name_list": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 69.2,
+        "total_t0_violations": 0
+      },
+      "B2_score_corroboration": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 92
+      },
+      "B3_rate_limit_only": {
+        "disruption_mean": 8.5,
+        "disruption_std": 5.94,
+        "disruption_ci95": [
+          0.0,
+          18.88
+        ],
+        "remediation_mean_pct": 9.3,
+        "total_t0_violations": 28
+      },
+      "B4_proposed_guardrail": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 67.9,
+        "total_t0_violations": 0
+      },
+      "B5_recommend_only": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 0.0,
+        "total_t0_violations": 0
+      }
+    },
+    "S6_slow_drip": {
+      "B0_auto_execute": {
+        "disruption_mean": 20.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          20.0,
+          20.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 84
+      },
+      "B1_static_name_list": {
+        "disruption_mean": 20.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          20.0,
+          20.0
+        ],
+        "remediation_mean_pct": 66.9,
+        "total_t0_violations": 0
+      },
+      "B2_score_corroboration": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 71
+      },
+      "B3_rate_limit_only": {
+        "disruption_mean": 4.5,
+        "disruption_std": 1.12,
+        "disruption_ci95": [
+          3.0,
+          6.0
+        ],
+        "remediation_mean_pct": 5.2,
+        "total_t0_violations": 4
+      },
+      "B4_proposed_guardrail": {
+        "disruption_mean": 10.2,
+        "disruption_std": 2.56,
+        "disruption_ci95": [
+          7.0,
+          14.0
+        ],
+        "remediation_mean_pct": 72.8,
+        "total_t0_violations": 0
+      },
+      "B5_recommend_only": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 0.0,
+        "total_t0_violations": 0
+      }
+    },
+    "S7_coordinated_incident": {
+      "B0_auto_execute": {
+        "disruption_mean": 60.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          60.0,
+          60.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 272
+      },
+      "B1_static_name_list": {
+        "disruption_mean": 10.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          10.0,
+          10.0
+        ],
+        "remediation_mean_pct": 70.1,
+        "total_t0_violations": 100
+      },
+      "B2_score_corroboration": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 79
+      },
+      "B3_rate_limit_only": {
+        "disruption_mean": 29.3,
+        "disruption_std": 6.0,
+        "disruption_ci95": [
+          19.68,
+          37.77
+        ],
+        "remediation_mean_pct": 0.0,
+        "total_t0_violations": 93
+      },
+      "B4_proposed_guardrail": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 69.7,
+        "total_t0_violations": 0
+      },
+      "B5_recommend_only": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 0.0,
+        "total_t0_violations": 0
+      }
+    },
+    "S_adaptive": {
+      "B0_auto_execute": {
+        "disruption_mean": 4.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          4.0,
+          4.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 76
+      },
+      "B1_static_name_list": {
+        "disruption_mean": 4.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          4.0,
+          4.0
+        ],
+        "remediation_mean_pct": 63.6,
+        "total_t0_violations": 0
+      },
+      "B2_score_corroboration": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 100.0,
+        "total_t0_violations": 80
+      },
+      "B3_rate_limit_only": {
+        "disruption_mean": 0.4,
+        "disruption_std": 0.31,
+        "disruption_ci95": [
+          0.0,
+          0.96
+        ],
+        "remediation_mean_pct": 8.8,
+        "total_t0_violations": 9
+      },
+      "B4_proposed_guardrail": {
+        "disruption_mean": 4.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          4.0,
+          4.0
+        ],
+        "remediation_mean_pct": 69.2,
+        "total_t0_violations": 0
+      },
+      "B5_recommend_only": {
+        "disruption_mean": 0.0,
+        "disruption_std": 0.0,
+        "disruption_ci95": [
+          0.0,
+          0.0
+        ],
+        "remediation_mean_pct": 0.0,
+        "total_t0_violations": 0
+      }
+    }
+  },
+  "table_iii_forging_capacity_sweep": {
+    "0.0": {
+      "forging_capacity_q": 0.0,
+      "attacker_disruption_d": 0.0,
+      "t0_violations": 0,
+      "remediation_rate_pct": 77.3,
+      "escalations": 25
+    },
+    "0.1": {
+      "forging_capacity_q": 0.1,
+      "attacker_disruption_d": 0.0,
+      "t0_violations": 0,
+      "remediation_rate_pct": 63.3,
+      "escalations": 31
+    },
+    "0.25": {
+      "forging_capacity_q": 0.25,
+      "attacker_disruption_d": 0.0,
+      "t0_violations": 0,
+      "remediation_rate_pct": 65.4,
+      "escalations": 30
+    },
+    "0.5": {
+      "forging_capacity_q": 0.5,
+      "attacker_disruption_d": 0.0,
+      "t0_violations": 0,
+      "remediation_rate_pct": 70.8,
+      "escalations": 27
+    },
+    "1.0": {
+      "forging_capacity_q": 1.0,
+      "attacker_disruption_d": 0.0,
+      "t0_violations": 0,
+      "remediation_rate_pct": 66.7,
+      "escalations": 26
+    }
+  },
+  "proposition_1_additivity": {
+    "max_error": 2.842170943040401e-14,
+    "theorem_satisfied": true
+  }
+}

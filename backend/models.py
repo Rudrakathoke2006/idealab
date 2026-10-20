@@ -8,7 +8,7 @@ def gen_uuid():
     return str(uuid.uuid4())
 
 def utc_now():
-    return datetime.datetime.utcnow()
+    return datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
 
 class Organization(Base):
     __tablename__ = "organizations"

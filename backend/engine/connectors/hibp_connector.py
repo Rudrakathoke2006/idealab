@@ -39,7 +39,7 @@ class HIBPConnectorAdapter(BaseConnectorAdapter):
                     "data_sensitivity": 9.5,
                     "breach_name": "FinanceDataDump2026",
                     "domain": account_identifier.split("@")[-1] if "@" in account_identifier else "acme.test",
-                    "exposure_date": datetime.datetime.utcnow().isoformat() + "Z",
+                    "exposure_date": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                     "raw_payload": {"breach": "FinanceDataDump2026", "pwned_fields": ["Emails", "Passwords", "Hashes"]}
                 }
             ]
@@ -56,7 +56,7 @@ class HIBPConnectorAdapter(BaseConnectorAdapter):
                 "data_sensitivity": 9.0,
                 "breach_name": b.get("Name"),
                 "domain": identifier.split("@")[-1] if "@" in identifier else "acme.test",
-                "exposure_date": b.get("BreachDate", datetime.datetime.utcnow().isoformat()),
+                "exposure_date": b.get("BreachDate", datetime.datetime.now(datetime.timezone.utc).isoformat()),
                 "raw_payload": b
             })
         return results

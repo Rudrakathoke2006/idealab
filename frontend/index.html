@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,15 +34,24 @@
         }
     </script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
         .aegis-card {
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
@@ -114,45 +124,70 @@
             background-color: #f0f9ff;
         }
 
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f8fafc; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
     </style>
 </head>
+
 <body class="bg-aegis-bg text-aegis-text min-h-screen flex flex-col antialiased">
 
     <!-- Header Navbar -->
-    <header class="bg-white border-b border-aegis-border px-8 py-3.5 flex items-center justify-between sticky top-0 z-50 shadow-sm">
+    <header
+        class="bg-white border-b border-aegis-border px-8 py-3.5 flex items-center justify-between sticky top-0 z-50 shadow-sm">
         <div class="flex items-center space-x-8">
             <!-- Brand Logo -->
             <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('tab-dashboard')">
-                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center font-black text-white text-lg shadow-sm">
+                <div
+                    class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center font-black text-white text-lg shadow-sm">
                     A
                 </div>
                 <div class="flex items-center space-x-2">
                     <span class="text-xl font-extrabold tracking-tight text-slate-900">AEGIS-X</span>
-                    <span class="text-xs text-slate-400 font-semibold hidden md:inline">| Cyber Exposure Intelligence</span>
+                    <span class="text-xs text-slate-400 font-semibold hidden md:inline">| Cyber Exposure
+                        Intelligence</span>
                 </div>
             </div>
 
             <!-- Global Shortcuts -->
             <nav class="hidden lg:flex items-center space-x-6 text-xs font-semibold text-slate-600">
-                <button onclick="switchTab('tab-dashboard')" class="hover:text-slate-900 transition-colors">Command Center</button>
-                <button onclick="switchTab('tab-incidents')" class="hover:text-slate-900 transition-colors">Incidents Queue</button>
-                <button onclick="switchTab('tab-graph')" class="hover:text-slate-900 transition-colors">Attack Path Graph</button>
-                <button onclick="switchTab('tab-xai')" class="hover:text-slate-900 transition-colors">SHAP XAI Analysis</button>
-                <button onclick="switchTab('tab-tools')" class="hover:text-slate-900 transition-colors">Security Tools</button>
-                <button onclick="switchTab('tab-quantum-audit')" class="hover:text-slate-900 transition-colors text-indigo-700 font-bold">Quantum Audit & Integrity</button>
-                <button onclick="switchTab('tab-messaging')" class="hover:text-slate-900 transition-colors text-emerald-700 font-bold">Secure Incident Messages (E2EE)</button>
+                <button onclick="switchTab('tab-dashboard')" class="hover:text-slate-900 transition-colors">Command
+                    Center</button>
+                <button onclick="switchTab('tab-incidents')" class="hover:text-slate-900 transition-colors">Incidents
+                    Queue</button>
+                <button onclick="switchTab('tab-graph')" class="hover:text-slate-900 transition-colors">Attack Path
+                    Graph</button>
+                <button onclick="switchTab('tab-xai')" class="hover:text-slate-900 transition-colors">SHAP XAI
+                    Analysis</button>
+                <button onclick="switchTab('tab-tools')" class="hover:text-slate-900 transition-colors">Security
+                    Tools</button>
+                <button onclick="switchTab('tab-quantum-audit')"
+                    class="hover:text-slate-900 transition-colors text-indigo-700 font-bold">Quantum Audit &
+                    Integrity</button>
+                <button onclick="switchTab('tab-messaging')"
+                    class="hover:text-slate-900 transition-colors text-emerald-700 font-bold">Secure Incident Messages
+                    (E2EE)</button>
             </nav>
         </div>
 
         <div class="flex items-center space-x-3">
-            <div class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-mono border border-emerald-200 font-bold flex items-center space-x-1.5">
+            <div
+                class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-mono border border-emerald-200 font-bold flex items-center space-x-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span>NIST CSF 2.0 VERIFIED</span>
             </div>
-            <button onclick="runE2EScenario()" class="aegis-pill-btn text-xs bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm font-bold">
+            <button onclick="runE2EScenario()"
+                class="aegis-pill-btn text-xs bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm font-bold">
                 <i data-lucide="play-circle" class="w-3.5 h-3.5"></i>
                 <span>Run E2E Demo</span>
             </button>
@@ -160,7 +195,8 @@
                 <i data-lucide="scan" class="w-3.5 h-3.5"></i>
                 <span>Scan Telemetry</span>
             </button>
-            <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold shadow-sm" title="SOC Analyst L2">
+            <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold shadow-sm"
+                title="SOC Analyst L2">
                 SA
             </div>
         </div>
@@ -175,7 +211,9 @@
         <button onclick="switchTab('tab-incidents')" id="btn-incidents" class="tab-btn-aegis">
             <i data-lucide="zap" class="w-4 h-4 text-sky-600"></i>
             <span>Breach Incidents</span>
-            <span id="badge-critical-count" class="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-mono font-bold border border-red-200">2 CRITICAL</span>
+            <span id="badge-critical-count"
+                class="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-mono font-bold border border-red-200">2
+                CRITICAL</span>
         </button>
         <button onclick="switchTab('tab-graph')" id="btn-graph" class="tab-btn-aegis">
             <i data-lucide="share-2" class="w-4 h-4 text-purple-600"></i>
@@ -188,7 +226,9 @@
         <button onclick="switchTab('tab-quantum-audit')" id="btn-quantum-audit" class="tab-btn-aegis">
             <i data-lucide="shield-check" class="w-4 h-4 text-indigo-600"></i>
             <span>Audit & Integrity</span>
-            <span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-mono font-bold border border-indigo-200">RFC 9162 + PQC</span>
+            <span
+                class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-mono font-bold border border-indigo-200">RFC
+                9162 + PQC</span>
         </button>
         <button onclick="switchTab('tab-tools')" id="btn-tools" class="tab-btn-aegis">
             <i data-lucide="wrench" class="w-4 h-4 text-emerald-600"></i>
@@ -197,7 +237,9 @@
         <button onclick="switchTab('tab-messaging')" id="btn-messaging" class="tab-btn-aegis">
             <i data-lucide="message-square-lock" class="w-4 h-4 text-emerald-600"></i>
             <span>Secure Messaging</span>
-            <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-mono font-bold border border-emerald-200">Matrix E2EE</span>
+            <span
+                class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-mono font-bold border border-emerald-200">Matrix
+                E2EE</span>
         </button>
     </div>
 
@@ -213,10 +255,12 @@
                     <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight" id="dash-org-name">
                         Acme FinTech Ltd. — Security Command Center
                     </h1>
-                    <p class="text-xs text-slate-500 mt-1">Continuous exposure monitoring, threat correlation, and NIST CSF 2.0 posture evaluation</p>
+                    <p class="text-xs text-slate-500 mt-1">Continuous exposure monitoring, threat correlation, and NIST
+                        CSF 2.0 posture evaluation</p>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <span class="px-3 py-1.5 rounded-xl bg-red-50 text-red-700 border border-red-200 font-mono text-xs font-bold flex items-center space-x-2">
+                    <span
+                        class="px-3 py-1.5 rounded-xl bg-red-50 text-red-700 border border-red-200 font-mono text-xs font-bold flex items-center space-x-2">
                         <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
                         <span id="dash-risk-score">93 / 100 CRITICAL RISK</span>
                     </span>
@@ -305,14 +349,18 @@
             </div>
 
             <!-- Cryptographic Merkle Tree Audit Banner Card -->
-            <div class="aegis-card p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-slate-900 text-white shadow-xl">
+            <div
+                class="aegis-card p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-slate-900 text-white shadow-xl">
                 <div class="space-y-1">
                     <div class="flex items-center space-x-2">
-                        <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[10px] font-bold border border-emerald-500/30">SHA-256 MERKLE TREE ANCHOR</span>
+                        <span
+                            class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[10px] font-bold border border-emerald-500/30">SHA-256
+                            MERKLE TREE ANCHOR</span>
                         <span class="text-xs text-slate-400 font-mono">SOAR & Audit Guardrails Active</span>
                     </div>
                     <h3 class="text-sm font-bold text-white">Cryptographic Audit Chain & Merkle Root Verification</h3>
-                    <p class="text-xs text-slate-400">Verifies tamper-proof execution logs, SOAR playbook safety evaluations, and event hashes across all SOC actions.</p>
+                    <p class="text-xs text-slate-400">Verifies tamper-proof execution logs, SOAR playbook safety
+                        evaluations, and event hashes across all SOC actions.</p>
                 </div>
                 <div class="flex items-center space-x-3 shrink-0">
                     <div id="dash-merkle-status" class="hidden text-right font-mono text-xs">
@@ -322,11 +370,13 @@
                         </div>
                         <div class="text-[10px] text-slate-400 truncate max-w-[220px]" id="dash-merkle-root"></div>
                     </div>
-                    <button onclick="generateMerkleAnchor(true)" class="aegis-pill-btn text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition-all transform active:scale-95 shadow-md shadow-emerald-500/20">
+                    <button onclick="generateMerkleAnchor(true)"
+                        class="aegis-pill-btn text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition-all transform active:scale-95 shadow-md shadow-emerald-500/20">
                         <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
                         <span>Anchor Merkle Tree</span>
                     </button>
-                    <button onclick="openMerkleModal()" class="aegis-pill-light text-xs bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700">
+                    <button onclick="openMerkleModal()"
+                        class="aegis-pill-light text-xs bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700">
                         <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                         <span>Audit Proofs</span>
                     </button>
@@ -336,31 +386,41 @@
 
             <!-- Operational Quick Action Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="aegis-card p-6 space-y-3 cursor-pointer hover:border-sky-300" onclick="switchTab('tab-incidents')">
-                    <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-bold">
+                <div class="aegis-card p-6 space-y-3 cursor-pointer hover:border-sky-300"
+                    onclick="switchTab('tab-incidents')">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-bold">
                         <i data-lucide="zap" class="w-5 h-5"></i>
                     </div>
                     <h4 class="text-base font-bold text-slate-900">Investigate Incidents</h4>
-                    <p class="text-xs text-slate-500">Review real-time breach exposure incidents, severity classifications, and assigned analysts.</p>
+                    <p class="text-xs text-slate-500">Review real-time breach exposure incidents, severity
+                        classifications, and assigned analysts.</p>
                     <span class="text-xs text-sky-600 font-bold inline-flex items-center gap-1">Open Queue &rarr;</span>
                 </div>
 
-                <div class="aegis-card p-6 space-y-3 cursor-pointer hover:border-sky-300" onclick="switchTab('tab-graph')">
-                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
+                <div class="aegis-card p-6 space-y-3 cursor-pointer hover:border-sky-300"
+                    onclick="switchTab('tab-graph')">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
                         <i data-lucide="share-2" class="w-5 h-5"></i>
                     </div>
                     <h4 class="text-base font-bold text-slate-900">Explore Attack Graph</h4>
-                    <p class="text-xs text-slate-500">Visualize blast radius propagation from identity leaks to internal databases.</p>
+                    <p class="text-xs text-slate-500">Visualize blast radius propagation from identity leaks to internal
+                        databases.</p>
                     <span class="text-xs text-sky-600 font-bold inline-flex items-center gap-1">View Graph &rarr;</span>
                 </div>
 
-                <div class="aegis-card p-6 space-y-3 cursor-pointer hover:border-sky-300" onclick="switchTab('tab-xai')">
-                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
+                <div class="aegis-card p-6 space-y-3 cursor-pointer hover:border-sky-300"
+                    onclick="switchTab('tab-xai')">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
                         <i data-lucide="sliders" class="w-5 h-5"></i>
                     </div>
                     <h4 class="text-base font-bold text-slate-900">Execute Playbooks</h4>
-                    <p class="text-xs text-slate-500">Inspect SHAP risk factor attributions and execute credential reset or session revocation playbooks.</p>
-                    <span class="text-xs text-sky-600 font-bold inline-flex items-center gap-1">Inspect SHAP &rarr;</span>
+                    <p class="text-xs text-slate-500">Inspect SHAP risk factor attributions and execute credential reset
+                        or session revocation playbooks.</p>
+                    <span class="text-xs text-sky-600 font-bold inline-flex items-center gap-1">Inspect SHAP
+                        &rarr;</span>
                 </div>
             </div>
         </div>
@@ -368,7 +428,8 @@
         <!-- TAB 2: BREACH INCIDENT QUEUE -->
         <div id="tab-incidents" class="space-y-6 hidden">
             <!-- Active Alert Banner -->
-            <div class="aegis-card p-6 border-l-4 border-l-red-600 bg-red-50/40 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div
+                class="aegis-card p-6 border-l-4 border-l-red-600 bg-red-50/40 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                 <div class="flex items-start space-x-4">
                     <div class="p-3 rounded-xl bg-red-100 text-red-600 border border-red-200 shrink-0">
                         <i data-lucide="alert-triangle" class="w-6 h-6 animate-pulse"></i>
@@ -376,14 +437,19 @@
                     <div>
                         <div class="flex items-center space-x-3">
                             <h2 class="text-base font-bold text-slate-900">ACTIVE CRITICAL BREACH EXPOSURE</h2>
-                            <span class="px-2.5 py-0.5 rounded bg-red-100 text-red-700 font-mono text-xs font-bold border border-red-200">REAL-TIME TELEMETRY</span>
+                            <span
+                                class="px-2.5 py-0.5 rounded bg-red-100 text-red-700 font-mono text-xs font-bold border border-red-200">REAL-TIME
+                                TELEMETRY</span>
                         </div>
                         <p class="text-xs text-slate-600 mt-1 max-w-3xl">
-                            Privileged credential exposure reaching mission-critical <strong class="text-slate-900">ERP-01 Engine</strong> and <strong class="text-slate-900">FinanceDB Production Cluster</strong>.
+                            Privileged credential exposure reaching mission-critical <strong
+                                class="text-slate-900">ERP-01 Engine</strong> and <strong
+                                class="text-slate-900">FinanceDB Production Cluster</strong>.
                         </p>
                     </div>
                 </div>
-                <button onclick="switchTab('tab-xai')" class="aegis-pill-btn text-xs bg-red-600 hover:bg-red-700 text-white shrink-0">
+                <button onclick="switchTab('tab-xai')"
+                    class="aegis-pill-btn text-xs bg-red-600 hover:bg-red-700 text-white shrink-0">
                     Investigate Critical Incident &rarr;
                 </button>
             </div>
@@ -392,12 +458,17 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="flex items-center space-x-2 text-xs font-semibold">
                     <span class="text-slate-500">Filter Severity:</span>
-                    <button onclick="filterIncidents('ALL')" class="px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-bold">ALL</button>
-                    <button onclick="filterIncidents('CRITICAL')" class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold border border-red-200">CRITICAL</button>
-                    <button onclick="filterIncidents('HIGH')" class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold border border-amber-200">HIGH</button>
+                    <button onclick="filterIncidents('ALL')"
+                        class="px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-bold">ALL</button>
+                    <button onclick="filterIncidents('CRITICAL')"
+                        class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold border border-red-200">CRITICAL</button>
+                    <button onclick="filterIncidents('HIGH')"
+                        class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold border border-amber-200">HIGH</button>
                 </div>
                 <div class="relative w-full sm:w-64">
-                    <input type="text" id="incident-search" oninput="searchIncidents()" placeholder="Search incidents..." class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-sky-500 font-mono">
+                    <input type="text" id="incident-search" oninput="searchIncidents()"
+                        placeholder="Search incidents..."
+                        class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-none focus:border-sky-500 font-mono">
                 </div>
             </div>
 
@@ -413,25 +484,32 @@
                 <div class="flex items-center justify-between border-b border-slate-200 pb-4">
                     <div>
                         <h2 class="text-lg font-bold text-slate-900">Trust Exchange & Attack Path Knowledge Graph</h2>
-                        <p class="text-xs text-slate-500">NetworkX graph traversal mapping identity exposure propagation to enterprise crown jewel assets</p>
+                        <p class="text-xs text-slate-500">NetworkX graph traversal mapping identity exposure propagation
+                            to enterprise crown jewel assets</p>
                     </div>
-                    <span class="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-mono font-bold border border-purple-200">NetworkX Graph Engine</span>
+                    <span
+                        class="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-mono font-bold border border-purple-200">NetworkX
+                        Graph Engine</span>
                 </div>
 
                 <!-- Attack Path Visualizer -->
                 <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 space-y-6">
-                    <h3 class="text-xs font-bold text-slate-700 font-mono uppercase tracking-wider">Plausible Defensive Attack Sequence (Incident #AEX-00294)</h3>
-                    
+                    <h3 class="text-xs font-bold text-slate-700 font-mono uppercase tracking-wider">Plausible Defensive
+                        Attack Sequence (Incident #AEX-00294)</h3>
+
                     <div id="attack-path-nodes-container" class="grid grid-cols-1 md:grid-cols-5 gap-3">
                         <!-- Populated dynamically via JS -->
                     </div>
 
                     <!-- Selected Node Info Box -->
-                    <div id="node-info-box" class="p-4 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+                    <div id="node-info-box"
+                        class="p-4 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
                         <div>
                             <span class="text-sky-600 font-bold font-mono">SELECTED GRAPH NODE:</span>
-                            <span id="node-info-title" class="text-slate-900 font-bold ml-2">CFO Password Indicator</span>
-                            <p id="node-info-desc" class="text-[11px] text-slate-500 mt-0.5">Click any attack path node above to inspect structural parameters.</p>
+                            <span id="node-info-title" class="text-slate-900 font-bold ml-2">CFO Password
+                                Indicator</span>
+                            <p id="node-info-desc" class="text-[11px] text-slate-500 mt-0.5">Click any attack path node
+                                above to inspect structural parameters.</p>
                         </div>
                         <span class="aegis-pill-light text-[10px] shrink-0">GRAPH NODE DETAILS</span>
                     </div>
@@ -439,33 +517,43 @@
 
                 <!-- Choke-Point Defense Analysis Panel (Min-Cut / Graph Optimization) -->
                 <div class="p-6 rounded-2xl bg-slate-900 text-white space-y-4 border border-slate-800 shadow-xl">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                    <div
+                        class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
                         <div class="flex items-center space-x-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
                                 <i data-lucide="scissors" class="w-4 h-4"></i>
                             </div>
                             <div>
-                                <h3 class="text-xs font-bold font-mono tracking-wider text-amber-400 uppercase">Choke-Point Defense Analysis (Graph Min-Cut)</h3>
-                                <p class="text-[11px] text-slate-400">Identifies the single optimal cut-edge that breaks lateral attack paths to crown jewels with minimal operational impact</p>
+                                <h3 class="text-xs font-bold font-mono tracking-wider text-amber-400 uppercase">
+                                    Choke-Point Defense Analysis (Graph Min-Cut)</h3>
+                                <p class="text-[11px] text-slate-400">Identifies the single optimal cut-edge that breaks
+                                    lateral attack paths to crown jewels with minimal operational impact</p>
                             </div>
                         </div>
-                        <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold border border-emerald-500/30">100% LATERAL PATHS BLOCKED</span>
+                        <span
+                            class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold border border-emerald-500/30">100%
+                            LATERAL PATHS BLOCKED</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
                         <div class="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
                             <span class="text-[10px] text-slate-400">RECOMMENDED CUT-EDGE</span>
-                            <div id="choke-edge-display" class="font-bold text-sky-400 break-all text-xs">cfo@acme.test &rarr; Edge VPN Gateway (ast-vpna-01)</div>
+                            <div id="choke-edge-display" class="font-bold text-sky-400 break-all text-xs">cfo@acme.test
+                                &rarr; Edge VPN Gateway (ast-vpna-01)</div>
                             <div class="text-[10px] text-slate-400">Severing this link halts lateral movement</div>
                         </div>
                         <div class="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
                             <span class="text-[10px] text-slate-400">CHOKE-POINT EFFICIENCY</span>
-                            <div id="choke-efficiency-display" class="font-bold text-emerald-400 text-base">100.0% Choke Efficiency</div>
+                            <div id="choke-efficiency-display" class="font-bold text-emerald-400 text-base">100.0% Choke
+                                Efficiency</div>
                             <div class="text-[10px] text-slate-400">Eliminates 4 of 4 simple paths to FinanceDB</div>
                         </div>
-                        <div class="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-col justify-between space-y-2">
+                        <div
+                            class="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-col justify-between space-y-2">
                             <span class="text-[10px] text-slate-400">TARGETED DEFENSE ACTION</span>
-                            <button onclick="isolateChokePointEdge()" id="btn-isolate-choke" class="aegis-pill-btn text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold w-full text-center">
+                            <button onclick="isolateChokePointEdge()" id="btn-isolate-choke"
+                                class="aegis-pill-btn text-xs bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold w-full text-center">
                                 <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
                                 <span>Sever Choke Point & Revoke</span>
                             </button>
@@ -480,18 +568,31 @@
             <div class="aegis-card p-6 space-y-6">
                 <div class="flex items-center justify-between border-b border-slate-200 pb-4">
                     <div>
-                        <span id="xai-sev-badge" class="px-2.5 py-1 rounded bg-red-100 text-red-700 font-mono text-xs font-bold border border-red-200">SEVERITY 93 / 100 — CRITICAL</span>
-                        <h2 id="xai-title" class="text-lg font-bold text-slate-900 mt-2">Incident #AEX-00294 — CFO Credential Leak & XAI Breakdown</h2>
+                        <span id="xai-sev-badge"
+                            class="px-2.5 py-1 rounded bg-red-100 text-red-700 font-mono text-xs font-bold border border-red-200">SEVERITY
+                            93 / 100 — CRITICAL</span>
+                        <h2 id="xai-title" class="text-lg font-bold text-slate-900 mt-2">Incident #AEX-00294 — CFO
+                            Credential Leak & XAI Breakdown</h2>
                     </div>
-                    <span id="xai-conf-badge" class="px-3 py-1 rounded-full bg-sky-100 text-sky-700 text-xs font-mono font-bold border border-sky-200">CONFIDENCE 88% HIGH</span>
+                    <span id="xai-conf-badge"
+                        class="px-3 py-1 rounded-full bg-sky-100 text-sky-700 text-xs font-mono font-bold border border-sky-200">CONFIDENCE
+                        88% HIGH</span>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-2 space-y-6">
                         <!-- Narrative Box -->
-                        <div id="xai-narrative-box" class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed shadow-sm">
+                        <div id="xai-narrative-box"
+                            class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed shadow-sm">
                             <strong class="text-sky-600 font-mono">SHAP XAI NARRATIVE EXPLANATION:</strong><br>
-                            <span id="xai-narrative-text">"Risk is classified as <span class="text-red-600 font-bold">CRITICAL (Score 93/100)</span> because a recently exposed privileged Finance identity (<strong class="text-slate-900">cfo@acme.test</strong>) has direct access to mission-critical <strong class="text-slate-900">ERP-01 Engine</strong> and <strong class="text-slate-900">FinanceDB</strong>, while the associated internet-facing VPN gateway contains an actively exploited CISA KEV vulnerability (<strong class="text-slate-900">CVE-2024-21887</strong>)."</span>
+                            <span id="xai-narrative-text">"Risk is classified as <span
+                                    class="text-red-600 font-bold">CRITICAL (Score 93/100)</span> because a recently
+                                exposed privileged Finance identity (<strong
+                                    class="text-slate-900">cfo@acme.test</strong>) has direct access to mission-critical
+                                <strong class="text-slate-900">ERP-01 Engine</strong> and <strong
+                                    class="text-slate-900">FinanceDB</strong>, while the associated internet-facing VPN
+                                gateway contains an actively exploited CISA KEV vulnerability (<strong
+                                    class="text-slate-900">CVE-2024-21887</strong>)."</span>
                         </div>
 
                         <!-- SHAP Canvas -->
@@ -500,25 +601,34 @@
                         </div>
 
                         <!-- Interactive Risk & Posture Simulator -->
-                        <div class="p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100/70 border border-slate-200/90 space-y-5 shadow-sm">
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-3.5">
+                        <div
+                            class="p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100/70 border border-slate-200/90 space-y-5 shadow-sm">
+                            <div
+                                class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-3.5">
                                 <div class="flex items-center space-x-2.5">
-                                    <div class="w-8 h-8 rounded-lg bg-sky-600 text-white flex items-center justify-center shadow-sm">
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-sky-600 text-white flex items-center justify-center shadow-sm">
                                         <i data-lucide="sliders" class="w-4 h-4"></i>
                                     </div>
                                     <div>
-                                        <h3 class="text-sm font-bold text-slate-900 font-mono tracking-tight flex items-center gap-2">
+                                        <h3
+                                            class="text-sm font-bold text-slate-900 font-mono tracking-tight flex items-center gap-2">
                                             <span>Interactive Risk & Posture Simulator</span>
-                                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 font-mono font-bold border border-sky-200">LIVE DYNAMIC ENGINE</span>
+                                            <span
+                                                class="text-[10px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 font-mono font-bold border border-sky-200">LIVE
+                                                DYNAMIC ENGINE</span>
                                         </h3>
-                                        <p class="text-[11px] text-slate-500">Real-time counterfactual simulation powered by XGBoost, TreeSHAP & Isotonic Calibration</p>
+                                        <p class="text-[11px] text-slate-500">Real-time counterfactual simulation
+                                            powered by XGBoost, TreeSHAP & Isotonic Calibration</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <button onclick="applySimPreset('default')" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 text-[11px] font-bold hover:bg-slate-50 transition-all shadow-xs">
+                                    <button onclick="applySimPreset('default')"
+                                        class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 text-[11px] font-bold hover:bg-slate-50 transition-all shadow-xs">
                                         Reset Default
                                     </button>
-                                    <button onclick="applySimPreset('hardened')" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold hover:bg-emerald-700 transition-all shadow-xs flex items-center gap-1">
+                                    <button onclick="applySimPreset('hardened')"
+                                        class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold hover:bg-emerald-700 transition-all shadow-xs flex items-center gap-1">
                                         <i data-lucide="shield" class="w-3 h-3"></i>
                                         <span>Hardened Defense</span>
                                     </button>
@@ -527,26 +637,39 @@
 
                             <!-- Live Posture Gauge / Metric Bar -->
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                <div class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs text-center space-y-0.5">
-                                    <div class="text-[10px] uppercase font-bold text-slate-400 font-mono">Calibrated Risk Score</div>
+                                <div
+                                    class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs text-center space-y-0.5">
+                                    <div class="text-[10px] uppercase font-bold text-slate-400 font-mono">Calibrated
+                                        Risk Score</div>
                                     <div class="flex items-center justify-center gap-1">
-                                        <span id="sim-score-meter" class="text-2xl font-black font-mono text-red-600">93.0</span>
+                                        <span id="sim-score-meter"
+                                            class="text-2xl font-black font-mono text-red-600">93.0</span>
                                         <span class="text-[10px] font-mono text-slate-400">/100</span>
                                     </div>
-                                    <span id="sim-severity-pill" class="inline-block text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 border border-red-200">CRITICAL</span>
+                                    <span id="sim-severity-pill"
+                                        class="inline-block text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 border border-red-200">CRITICAL</span>
                                 </div>
-                                <div class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs text-center space-y-0.5">
-                                    <div class="text-[10px] uppercase font-bold text-slate-400 font-mono">P(Breach Exposure)</div>
-                                    <div id="sim-prob-meter" class="text-2xl font-black font-mono text-slate-900">94.8%</div>
-                                    <span class="text-[10px] font-mono text-emerald-600 font-semibold">ECE = 0.0182</span>
+                                <div
+                                    class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs text-center space-y-0.5">
+                                    <div class="text-[10px] uppercase font-bold text-slate-400 font-mono">P(Breach
+                                        Exposure)</div>
+                                    <div id="sim-prob-meter" class="text-2xl font-black font-mono text-slate-900">94.8%
+                                    </div>
+                                    <span class="text-[10px] font-mono text-emerald-600 font-semibold">ECE =
+                                        0.0182</span>
                                 </div>
-                                <div class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs text-center space-y-0.5">
-                                    <div class="text-[10px] uppercase font-bold text-slate-400 font-mono">Heuristic Rule Part</div>
-                                    <div id="sim-rule-meter" class="text-2xl font-black font-mono text-slate-700">91.4</div>
+                                <div
+                                    class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs text-center space-y-0.5">
+                                    <div class="text-[10px] uppercase font-bold text-slate-400 font-mono">Heuristic Rule
+                                        Part</div>
+                                    <div id="sim-rule-meter" class="text-2xl font-black font-mono text-slate-700">91.4
+                                    </div>
                                     <span class="text-[10px] font-mono text-slate-500">Weight 40%</span>
                                 </div>
-                                <div class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs text-center space-y-0.5">
-                                    <div class="text-[10px] uppercase font-bold text-slate-400 font-mono">ML Model Part</div>
+                                <div
+                                    class="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs text-center space-y-0.5">
+                                    <div class="text-[10px] uppercase font-bold text-slate-400 font-mono">ML Model Part
+                                    </div>
                                     <div id="sim-ml-meter" class="text-2xl font-black font-mono text-sky-600">94.8</div>
                                     <span class="text-[10px] font-mono text-slate-500">Weight 60%</span>
                                 </div>
@@ -555,18 +678,23 @@
                             <!-- Interactive Sliders Grid -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                                 <!-- Control 1: MFA Enforced Status (HIGHLIGHTED FOCUS) -->
-                                <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-sky-300 transition-colors">
+                                <div
+                                    class="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-sky-300 transition-colors">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-1.5 font-bold text-slate-800">
                                             <i data-lucide="key-round" class="w-4 h-4 text-sky-600"></i>
                                             <span>MFA Enforced:</span>
                                         </div>
                                         <div class="flex items-center space-x-2">
-                                            <span id="sim-mfa-val" class="font-mono text-red-600 font-bold px-2 py-0.5 rounded bg-red-50 border border-red-200">NO (0)</span>
-                                            <button onclick="toggleMfaState()" class="px-2 py-0.5 text-[10px] font-bold rounded bg-slate-900 text-white hover:bg-slate-800 transition-colors">Toggle</button>
+                                            <span id="sim-mfa-val"
+                                                class="font-mono text-red-600 font-bold px-2 py-0.5 rounded bg-red-50 border border-red-200">NO
+                                                (0)</span>
+                                            <button onclick="toggleMfaState()"
+                                                class="px-2 py-0.5 text-[10px] font-bold rounded bg-slate-900 text-white hover:bg-slate-800 transition-colors">Toggle</button>
                                         </div>
                                     </div>
-                                    <input type="range" id="sim-mfa" min="0" max="2" value="0" step="1" oninput="updateRiskSimulator()" class="w-full accent-sky-600 cursor-pointer">
+                                    <input type="range" id="sim-mfa" min="0" max="2" value="0" step="1"
+                                        oninput="updateRiskSimulator()" class="w-full accent-sky-600 cursor-pointer">
                                     <div class="flex justify-between text-[10px] text-slate-400 font-mono">
                                         <span>0: NO (Plaintext)</span>
                                         <span>1: SMS/Push (-8.5)</span>
@@ -575,15 +703,19 @@
                                 </div>
 
                                 <!-- Control 2: Exposure Recency -->
-                                <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-sky-300 transition-colors">
+                                <div
+                                    class="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-sky-300 transition-colors">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-1.5 font-bold text-slate-800">
                                             <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
                                             <span>Exposure Age / Recency:</span>
                                         </div>
-                                        <span id="sim-age-val" class="font-mono text-red-600 font-bold px-2 py-0.5 rounded bg-red-50 border border-red-200">2 Hours (Recent Active Spike)</span>
+                                        <span id="sim-age-val"
+                                            class="font-mono text-red-600 font-bold px-2 py-0.5 rounded bg-red-50 border border-red-200">2
+                                            Hours (Recent Active Spike)</span>
                                     </div>
-                                    <input type="range" id="sim-age" min="1" max="10" value="10" step="1" oninput="updateRiskSimulator()" class="w-full accent-sky-600 cursor-pointer">
+                                    <input type="range" id="sim-age" min="1" max="10" value="10" step="1"
+                                        oninput="updateRiskSimulator()" class="w-full accent-sky-600 cursor-pointer">
                                     <div class="flex justify-between text-[10px] text-slate-400 font-mono">
                                         <span>30 Days (Stale)</span>
                                         <span>7 Days</span>
@@ -592,15 +724,19 @@
                                 </div>
 
                                 <!-- Control 3: Asset Criticality -->
-                                <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-sky-300 transition-colors">
+                                <div
+                                    class="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-sky-300 transition-colors">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-1.5 font-bold text-slate-800">
                                             <i data-lucide="database" class="w-4 h-4 text-purple-600"></i>
                                             <span>Target Asset Criticality:</span>
                                         </div>
-                                        <span id="sim-crit-val" class="font-mono text-purple-600 font-bold px-2 py-0.5 rounded bg-purple-50 border border-purple-200">Tier-1 Crown Jewel (10.0)</span>
+                                        <span id="sim-crit-val"
+                                            class="font-mono text-purple-600 font-bold px-2 py-0.5 rounded bg-purple-50 border border-purple-200">Tier-1
+                                            Crown Jewel (10.0)</span>
                                     </div>
-                                    <input type="range" id="sim-crit" min="2" max="10" value="10" step="1" oninput="updateRiskSimulator()" class="w-full accent-sky-600 cursor-pointer">
+                                    <input type="range" id="sim-crit" min="2" max="10" value="10" step="1"
+                                        oninput="updateRiskSimulator()" class="w-full accent-sky-600 cursor-pointer">
                                     <div class="flex justify-between text-[10px] text-slate-400 font-mono">
                                         <span>Tier-4 Dev (2.0)</span>
                                         <span>Tier-2 Internal (6.0)</span>
@@ -609,15 +745,19 @@
                                 </div>
 
                                 <!-- Control 4: Identity Privilege -->
-                                <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-sky-300 transition-colors">
+                                <div
+                                    class="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-sky-300 transition-colors">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-1.5 font-bold text-slate-800">
                                             <i data-lucide="shield-alert" class="w-4 h-4 text-indigo-600"></i>
                                             <span>Identity Privilege Tier:</span>
                                         </div>
-                                        <span id="sim-priv-val" class="font-mono text-indigo-600 font-bold px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200">CFO / Executive Tier-0 (9.5)</span>
+                                        <span id="sim-priv-val"
+                                            class="font-mono text-indigo-600 font-bold px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200">CFO
+                                            / Executive Tier-0 (9.5)</span>
                                     </div>
-                                    <input type="range" id="sim-priv" min="2" max="10" value="9" step="1" oninput="updateRiskSimulator()" class="w-full accent-sky-600 cursor-pointer">
+                                    <input type="range" id="sim-priv" min="2" max="10" value="9" step="1"
+                                        oninput="updateRiskSimulator()" class="w-full accent-sky-600 cursor-pointer">
                                     <div class="flex justify-between text-[10px] text-slate-400 font-mono">
                                         <span>Standard User (3.0)</span>
                                         <span>DevOps Eng (7.0)</span>
@@ -626,15 +766,19 @@
                                 </div>
 
                                 <!-- Control 5: CISA KEV Vulnerability Context -->
-                                <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-sky-300 transition-colors">
+                                <div
+                                    class="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-sky-300 transition-colors">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-1.5 font-bold text-slate-800">
                                             <i data-lucide="flame" class="w-4 h-4 text-red-600"></i>
                                             <span>CISA KEV Exploitation:</span>
                                         </div>
-                                        <span id="sim-kev-val" class="font-mono text-red-600 font-bold px-2 py-0.5 rounded bg-red-50 border border-red-200">Active Wild (EPSS 0.94)</span>
+                                        <span id="sim-kev-val"
+                                            class="font-mono text-red-600 font-bold px-2 py-0.5 rounded bg-red-50 border border-red-200">Active
+                                            Wild (EPSS 0.94)</span>
                                     </div>
-                                    <input type="range" id="sim-kev" min="0" max="1" value="1" step="1" oninput="updateRiskSimulator()" class="w-full accent-sky-600 cursor-pointer">
+                                    <input type="range" id="sim-kev" min="0" max="1" value="1" step="1"
+                                        oninput="updateRiskSimulator()" class="w-full accent-sky-600 cursor-pointer">
                                     <div class="flex justify-between text-[10px] text-slate-400 font-mono">
                                         <span>No Known Exploits (EPSS 0.05)</span>
                                         <span>CVE-2024-21887 KEV (EPSS 0.94)</span>
@@ -642,15 +786,19 @@
                                 </div>
 
                                 <!-- Control 6: Blast Radius & Segmentation -->
-                                <div class="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-sky-300 transition-colors">
+                                <div
+                                    class="p-4 rounded-xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-sky-300 transition-colors">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center space-x-1.5 font-bold text-slate-800">
                                             <i data-lucide="network" class="w-4 h-4 text-teal-600"></i>
                                             <span>Blast Radius & Reachability:</span>
                                         </div>
-                                        <span id="sim-blast-val" class="font-mono text-red-600 font-bold px-2 py-0.5 rounded bg-red-50 border border-red-200">Direct Internet-Facing (9.2)</span>
+                                        <span id="sim-blast-val"
+                                            class="font-mono text-red-600 font-bold px-2 py-0.5 rounded bg-red-50 border border-red-200">Direct
+                                            Internet-Facing (9.2)</span>
                                     </div>
-                                    <input type="range" id="sim-blast" min="2" max="10" value="9" step="1" oninput="updateRiskSimulator()" class="w-full accent-sky-600 cursor-pointer">
+                                    <input type="range" id="sim-blast" min="2" max="10" value="9" step="1"
+                                        oninput="updateRiskSimulator()" class="w-full accent-sky-600 cursor-pointer">
                                     <div class="flex justify-between text-[10px] text-slate-400 font-mono">
                                         <span>Zero-Trust Enclave (2.0)</span>
                                         <span>Segmented DMZ (5.5)</span>
@@ -664,13 +812,15 @@
                     <!-- Right Column: Remediation Deck -->
                     <div class="space-y-6">
                         <div class="aegis-card p-6 space-y-4">
-                            <h3 class="text-sm font-bold text-slate-900 border-b border-slate-200 pb-3">Remediation Playbooks</h3>
+                            <h3 class="text-sm font-bold text-slate-900 border-b border-slate-200 pb-3">Remediation
+                                Playbooks</h3>
                             <div id="remediation-deck-container" class="space-y-3">
                                 <!-- Populated dynamically -->
                             </div>
-                            
+
                             <!-- Cryptographic Audit Event Banner -->
-                            <div id="audit-banner" class="hidden p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-800 space-y-1 font-mono">
+                            <div id="audit-banner"
+                                class="hidden p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-800 space-y-1 font-mono">
                                 <div class="font-bold flex items-center space-x-1">
                                     <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
                                     <span>HASH-CHAINED AUDIT VERIFIED</span>
@@ -690,9 +840,12 @@
                 <div class="flex items-center justify-between border-b border-slate-200 pb-4">
                     <div>
                         <h2 class="text-lg font-bold text-slate-900">Registered Asset Watchlist & Inventory</h2>
-                        <p class="text-xs text-slate-500">Corporate domains, servers, databases, cloud resources, and vendor integrations</p>
+                        <p class="text-xs text-slate-500">Corporate domains, servers, databases, cloud resources, and
+                            vendor integrations</p>
                     </div>
-                    <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-mono font-bold border border-emerald-200">10 ASSETS ENROLLED</span>
+                    <span
+                        class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-mono font-bold border border-emerald-200">10
+                        ASSETS ENROLLED</span>
                 </div>
 
                 <div class="overflow-x-auto text-xs">
@@ -720,15 +873,20 @@
                 <div class="flex items-center justify-between border-b border-slate-200 pb-4">
                     <div>
                         <h2 class="text-lg font-bold text-slate-900">NLP Threat Log & Entity Extraction Gateway</h2>
-                        <p class="text-xs text-slate-500">Extract identities, emails, API keys, and secret indicators with automatic tokenization and secret redaction</p>
+                        <p class="text-xs text-slate-500">Extract identities, emails, API keys, and secret indicators
+                            with automatic tokenization and secret redaction</p>
                     </div>
-                    <span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-mono font-bold border border-indigo-200">REDACTION ACTIVE</span>
+                    <span
+                        class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-mono font-bold border border-indigo-200">REDACTION
+                        ACTIVE</span>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-3">
                         <label class="text-xs font-bold text-slate-700">Raw Threat Log / Dark Web Dump Snippet:</label>
-                        <textarea id="nlp-input-text" rows="6" class="w-full p-3 rounded-xl border border-slate-300 focus:outline-none focus:border-sky-500 font-mono text-xs" placeholder="Paste threat text, email dumps, or secret keys here..."></textarea>
+                        <textarea id="nlp-input-text" rows="6"
+                            class="w-full p-3 rounded-xl border border-slate-300 focus:outline-none focus:border-sky-500 font-mono text-xs"
+                            placeholder="Paste threat text, email dumps, or secret keys here..."></textarea>
                         <button onclick="runNLPExtraction()" class="aegis-pill-btn text-xs w-full text-center">
                             <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
                             <span>Extract Entities & Redact Secrets</span>
@@ -736,8 +894,10 @@
                     </div>
 
                     <div class="space-y-3">
-                        <label class="text-xs font-bold text-slate-700">Structured Extracted Output (Tokenized & Safe):</label>
-                        <pre id="nlp-output-json" class="p-4 rounded-xl bg-slate-900 text-emerald-400 font-mono text-[11px] h-48 overflow-y-auto border border-slate-800">
+                        <label class="text-xs font-bold text-slate-700">Structured Extracted Output (Tokenized &
+                            Safe):</label>
+                        <pre id="nlp-output-json"
+                            class="p-4 rounded-xl bg-slate-900 text-emerald-400 font-mono text-[11px] h-48 overflow-y-auto border border-slate-800">
 {
   "status": "READY",
   "message": "Click 'Extract Entities' to run NLP engine."
@@ -752,9 +912,12 @@
                 <div class="flex items-center justify-between border-b border-slate-200 pb-4">
                     <div>
                         <h2 class="text-lg font-bold text-slate-900">Research Benchmark — 8-Stage Ablation Study</h2>
-                        <p class="text-xs text-slate-500">Quantitative evaluation of model performance from Model A to Model H</p>
+                        <p class="text-xs text-slate-500">Quantitative evaluation of model performance from Model A to
+                            Model H</p>
                     </div>
-                    <span class="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-mono font-bold border border-purple-200">PUBLISHABLE BENCHMARK</span>
+                    <span
+                        class="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-mono font-bold border border-purple-200">PUBLISHABLE
+                        BENCHMARK</span>
                 </div>
 
                 <div class="h-64 relative">
@@ -785,11 +948,16 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="aegis-card p-5 space-y-3 border-l-4 border-l-sky-500">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-slate-800 font-mono">GENERATOR SHIFT ADVERSARIAL BENCHMARK (Block B3)</span>
-                        <span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-mono text-[10px] font-bold">10-SEED RIGOR</span>
+                        <span class="text-xs font-bold text-slate-800 font-mono">GENERATOR SHIFT ADVERSARIAL BENCHMARK
+                            (Block B3)</span>
+                        <span
+                            class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-mono text-[10px] font-bold">10-SEED
+                            RIGOR</span>
                     </div>
                     <p class="text-xs text-slate-600">
-                        When evaluated on unobserved stochastic attack graphs (Generator v2), standard ML-Only models degrade from F1 <strong>0.986</strong> down to <strong>0.724</strong>, whereas the AEGIS-X Hybrid retains <strong>0.912</strong> robustness.
+                        When evaluated on unobserved stochastic attack graphs (Generator v2), standard ML-Only models
+                        degrade from F1 <strong>0.986</strong> down to <strong>0.724</strong>, whereas the AEGIS-X
+                        Hybrid retains <strong>0.912</strong> robustness.
                     </p>
                     <div class="grid grid-cols-2 gap-2 text-center text-xs font-mono pt-1">
                         <div class="p-2 rounded bg-slate-50 border border-slate-200">
@@ -805,11 +973,15 @@
 
                 <div class="aegis-card p-5 space-y-3 border-l-4 border-l-emerald-500">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-slate-800 font-mono">SOAR GUARDRAIL THREAT SIMULATION (Block G4-G6)</span>
-                        <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono text-[10px] font-bold">ZERO FALSE LOCKOUT</span>
+                        <span class="text-xs font-bold text-slate-800 font-mono">SOAR GUARDRAIL THREAT SIMULATION (Block
+                            G4-G6)</span>
+                        <span
+                            class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono text-[10px] font-bold">ZERO
+                            FALSE LOCKOUT</span>
                     </div>
                     <p class="text-xs text-slate-600">
-                        Adversarial breach feed poisoning simulation attempting denial-of-service against protected identity entities (CFO / Domain Controller / IdP).
+                        Adversarial breach feed poisoning simulation attempting denial-of-service against protected
+                        identity entities (CFO / Domain Controller / IdP).
                     </p>
                     <div class="grid grid-cols-2 gap-2 text-center text-xs font-mono pt-1">
                         <div class="p-2 rounded bg-red-50 border border-red-200">
@@ -821,6 +993,9 @@
                             <span class="text-emerald-700 font-bold text-sm">0% Locked Out (0 / 10⁵)</span>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
         <!-- TAB 6: QUANTUM-RESILIENT AUDIT & CRYPTOGRAPHIC INTEGRITY -->
         <div id="tab-quantum-audit" class="hidden space-y-8">
             <!-- Header Banner -->
@@ -828,16 +1003,20 @@
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center space-x-2">
                         <span>Quantum-Resilient Verifiable Audit & Integrity</span>
-                        <span class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-mono font-bold border border-indigo-200">RFC 9162 + FIPS 204</span>
+                        <span
+                            class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-mono font-bold border border-indigo-200">RFC
+                            9162 + FIPS 204</span>
                     </h1>
-                    <p class="text-xs text-slate-500 mt-1">Dual-signed Merkle Tree Heads (Ed25519 + ML-DSA-65), append-only consistency proofs, and verifiable TreeSHAP decision commitments.</p>
+                    <p class="text-xs text-slate-500 mt-1">Dual-signed Merkle Tree Heads (Ed25519 + ML-DSA-65),
+                        append-only consistency proofs, and verifiable TreeSHAP decision commitments.</p>
                 </div>
                 <div class="flex items-center space-x-2">
                     <button onclick="loadQuantumAuditData()" class="aegis-pill-light text-xs font-bold">
                         <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                         <span>Refresh Anchors</span>
                     </button>
-                    <button onclick="downloadOfflineAuditBundle()" class="aegis-pill-btn text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold">
+                    <button onclick="downloadOfflineAuditBundle()"
+                        class="aegis-pill-btn text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold">
                         <i data-lucide="download" class="w-3.5 h-3.5"></i>
                         <span>Export Offline Bundle</span>
                     </button>
@@ -857,7 +1036,8 @@
                         <div class="text-[11px] text-slate-500">Total Merkle Leaves Anchored</div>
                     </div>
                     <div class="pt-2 border-t border-slate-100">
-                        <span id="sth-verification-badge" class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-mono text-[11px] font-bold border border-emerald-200">
+                        <span id="sth-verification-badge"
+                            class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-mono text-[11px] font-bold border border-emerald-200">
                             ✔ DUAL SIGNATURE VERIFIED
                         </span>
                     </div>
@@ -873,7 +1053,8 @@
                         <div class="text-lg font-extrabold text-purple-700 font-mono">ML-DSA-65 (FIPS 204)</div>
                         <div class="text-[11px] text-slate-500">Lattice-Based Dilithium3 Scheme</div>
                     </div>
-                    <div class="flex items-center justify-between text-[11px] font-mono text-slate-600 pt-2 border-t border-slate-100">
+                    <div
+                        class="flex items-center justify-between text-[11px] font-mono text-slate-600 pt-2 border-t border-slate-100">
                         <span>Sig: <strong class="text-purple-700">3,309 B</strong></span>
                         <span>PubKey: <strong class="text-purple-700">1,952 B</strong></span>
                     </div>
@@ -889,7 +1070,8 @@
                         <div class="text-lg font-extrabold text-sky-700 font-mono">Ed25519 (RFC 8032)</div>
                         <div class="text-[11px] text-slate-500">Curve25519 Edwards Curve</div>
                     </div>
-                    <div class="flex items-center justify-between text-[11px] font-mono text-slate-600 pt-2 border-t border-slate-100">
+                    <div
+                        class="flex items-center justify-between text-[11px] font-mono text-slate-600 pt-2 border-t border-slate-100">
                         <span>Sig: <strong class="text-sky-700">64 B</strong></span>
                         <span>PubKey: <strong class="text-sky-700">32 B</strong></span>
                     </div>
@@ -905,7 +1087,8 @@
                         <div class="text-lg font-extrabold text-emerald-700 font-mono">X25519 + ML-KEM-768</div>
                         <div class="text-[11px] text-slate-500">HPKE Combiner + AES-256-GCM</div>
                     </div>
-                    <div class="flex items-center justify-between text-[11px] font-mono text-slate-600 pt-2 border-t border-slate-100">
+                    <div
+                        class="flex items-center justify-between text-[11px] font-mono text-slate-600 pt-2 border-t border-slate-100">
                         <span>Ciphertext: <strong class="text-emerald-700">1,088 B</strong></span>
                         <span>AAD: <strong class="text-emerald-700">Tenant-Bound</strong></span>
                     </div>
@@ -921,32 +1104,46 @@
                         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                             <div class="flex items-center space-x-2">
                                 <i data-lucide="git-commit" class="w-5 h-5 text-indigo-600"></i>
-                                <h3 class="text-sm font-bold text-slate-900">RFC 9162 Append-Only Consistency Verifier</h3>
+                                <h3 class="text-sm font-bold text-slate-900">RFC 9162 Append-Only Consistency Verifier
+                                </h3>
                             </div>
                             <span class="text-[10px] font-mono text-slate-400">Section 2.1.2</span>
                         </div>
                         <p class="text-xs text-slate-600 leading-relaxed">
-                            Proves mathematically that earlier log state at checkpoint <strong class="font-mono text-slate-900">m</strong> is an unadulterated, append-only prefix of current log state <strong class="font-mono text-slate-900">n</strong> without re-verifying past individual records.
+                            Proves mathematically that earlier log state at checkpoint <strong
+                                class="font-mono text-slate-900">m</strong> is an unadulterated, append-only prefix of
+                            current log state <strong class="font-mono text-slate-900">n</strong> without re-verifying
+                            past individual records.
                         </p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-[11px] font-bold text-slate-600 mb-1">First Tree Size (m):</label>
-                                <input type="number" id="cons-first-size" value="1" min="1" class="w-full p-2 border border-slate-300 rounded-lg font-mono text-xs focus:outline-none focus:border-indigo-500">
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">First Tree Size
+                                    (m):</label>
+                                <input type="number" id="cons-first-size" value="1" min="1"
+                                    class="w-full p-2 border border-slate-300 rounded-lg font-mono text-xs focus:outline-none focus:border-indigo-500">
                             </div>
                             <div>
-                                <label class="block text-[11px] font-bold text-slate-600 mb-1">Second Tree Size (n):</label>
-                                <input type="number" id="cons-second-size" value="4" min="1" class="w-full p-2 border border-slate-300 rounded-lg font-mono text-xs focus:outline-none focus:border-indigo-500">
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">Second Tree Size
+                                    (n):</label>
+                                <input type="number" id="cons-second-size" value="4" min="1"
+                                    class="w-full p-2 border border-slate-300 rounded-lg font-mono text-xs focus:outline-none focus:border-indigo-500">
                             </div>
                         </div>
-                        <button onclick="verifyConsistencyInteractive()" class="aegis-pill-btn text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold w-full justify-center">
+                        <button onclick="verifyConsistencyInteractive()"
+                            class="aegis-pill-btn text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold w-full justify-center">
                             <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
                             <span>Verify Consistency Proof Path</span>
                         </button>
                         <div id="cons-result-box" class="hidden p-3 rounded-xl font-mono text-xs"></div>
-                        <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 flex items-start space-x-2">
+                        <div
+                            class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 flex items-start space-x-2">
                             <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
                             <div>
-                                <strong>Zero-Trust Notice:</strong> Browser verification serves as an operational convenience dashboard. For untrusted or hostile server environments, run the standalone offline tool <code class="bg-amber-100 px-1 py-0.5 rounded font-bold">python backend/tools/verify_bundle.py --bundle audit_bundle.json</code> without server contact.
+                                <strong>Zero-Trust Notice:</strong> Browser verification serves as an operational
+                                convenience dashboard. For untrusted or hostile server environments, run the standalone
+                                offline tool <code
+                                    class="bg-amber-100 px-1 py-0.5 rounded font-bold">python backend/tools/verify_bundle.py --bundle audit_bundle.json</code>
+                                without server contact.
                             </div>
                         </div>
                     </div>
@@ -958,13 +1155,17 @@
                                 <i data-lucide="bug" class="w-5 h-5 text-red-600"></i>
                                 <h3 class="text-sm font-bold">Simulated Tampering & Quantum Forgery Detection</h3>
                             </div>
-                            <span class="px-2 py-0.5 rounded bg-red-100 text-red-700 text-[10px] font-mono font-bold">EVALUATION DEMO</span>
+                            <span
+                                class="px-2 py-0.5 rounded bg-red-100 text-red-700 text-[10px] font-mono font-bold">EVALUATION
+                                DEMO</span>
                         </div>
                         <p class="text-xs text-slate-600">
-                            Test detection resilience against a simulated quantum-forging adversary attempting to modify a past leaf event or rewrite historical signed tree heads.
+                            Test detection resilience against a simulated quantum-forging adversary attempting to modify
+                            a past leaf event or rewrite historical signed tree heads.
                         </p>
                         <div class="flex items-center gap-3">
-                            <button onclick="simulateTamperEvent()" class="aegis-pill-btn text-xs bg-red-600 hover:bg-red-700 text-white font-bold">
+                            <button onclick="simulateTamperEvent()"
+                                class="aegis-pill-btn text-xs bg-red-600 hover:bg-red-700 text-white font-bold">
                                 <i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i>
                                 <span>Simulate Event Tamper (Bit-Flip)</span>
                             </button>
@@ -990,7 +1191,8 @@
                         <div class="h-64 relative">
                             <canvas id="quantumFootprintChart"></canvas>
                         </div>
-                        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 text-[11px] text-slate-600 font-mono">
+                        <div
+                            class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 text-[11px] text-slate-600 font-mono">
                             <div class="flex justify-between">
                                 <span>Classical (Ed25519):</span>
                                 <strong class="text-sky-700">64 B sig / 32 B pk</strong>
@@ -1021,12 +1223,17 @@
                             <i data-lucide="fingerprint" class="w-5 h-5 text-amber-600"></i>
                             <h3 class="text-sm font-bold text-slate-900">Verifiable Explanations (RQ3)</h3>
                         </div>
-                        <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-mono font-bold">TAMPER-EVIDENT SHAP</span>
+                        <span
+                            class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-mono font-bold">TAMPER-EVIDENT
+                            SHAP</span>
                     </div>
                     <p class="text-xs text-slate-600">
-                        Binds decision evidence into the Merkle log: <code class="font-mono bg-slate-100 px-1 py-0.5 rounded">H(model) || H(features) || H(SHAP) || score || guardrail</code>. Offline verifiers recompute TreeSHAP to verify exact attribution integrity without server trust.
+                        Binds decision evidence into the Merkle log: <code
+                            class="font-mono bg-slate-100 px-1 py-0.5 rounded">H(model) || H(features) || H(SHAP) || score || guardrail</code>.
+                        Offline verifiers recompute TreeSHAP to verify exact attribution integrity without server trust.
                     </p>
-                    <div class="p-3 bg-slate-900 text-slate-200 rounded-xl font-mono text-xs space-y-1.5 overflow-x-auto">
+                    <div
+                        class="p-3 bg-slate-900 text-slate-200 rounded-xl font-mono text-xs space-y-1.5 overflow-x-auto">
                         <div class="text-slate-400 text-[10px]">INCIDENT #inc-00294 DECISION COMMITMENT:</div>
                         <div>Model SHA256: <span class="text-sky-400">d7a8f...39b</span></div>
                         <div>Features SHA256: <span class="text-emerald-400">e21c0...91a</span></div>
@@ -1034,7 +1241,8 @@
                         <div>Local Additivity Error: <span class="text-emerald-300 font-bold">&lt; 1.00e-6</span></div>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button onclick="verifyExplanationCommitment('inc-00294')" class="aegis-pill-btn text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold">
+                        <button onclick="verifyExplanationCommitment('inc-00294')"
+                            class="aegis-pill-btn text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold">
                             <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
                             <span>Recompute & Verify Local SHAP Hash</span>
                         </button>
@@ -1047,20 +1255,29 @@
                     <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                         <div class="flex items-center space-x-2">
                             <i data-lucide="shield" class="w-5 h-5 text-emerald-600"></i>
-                            <h3 class="text-sm font-bold text-slate-900">Hybrid-Encrypted Forensic Export (HNDL Defense)</h3>
+                            <h3 class="text-sm font-bold text-slate-900">Hybrid-Encrypted Forensic Export (HNDL Defense)
+                            </h3>
                         </div>
-                        <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold">FIPS 203 KEM</span>
+                        <span
+                            class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold">FIPS
+                            203 KEM</span>
                     </div>
                     <p class="text-xs text-slate-600">
-                        Guards against Harvest Now, Decrypt Later (HNDL) adversaries. Bundles and backups are sealed under hybrid classical X25519 and lattice ML-KEM-768 with authenticated associated data (AAD) binding tenant ID.
+                        Guards against Harvest Now, Decrypt Later (HNDL) adversaries. Bundles and backups are sealed
+                        under hybrid classical X25519 and lattice ML-KEM-768 with authenticated associated data (AAD)
+                        binding tenant ID.
                     </p>
                     <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1 font-mono">
-                        <div>Cipher Suite: <strong class="text-slate-900">HPKE(X25519 + ML-KEM-768, AES-256-GCM)</strong></div>
-                        <div>Tenant Isolation: <strong class="text-emerald-600">Active (Per-Tenant Key Rotation)</strong></div>
-                        <div>Offline CLI Tool: <code class="text-indigo-600 font-bold">backend/tools/verify_bundle.py</code></div>
+                        <div>Cipher Suite: <strong class="text-slate-900">HPKE(X25519 + ML-KEM-768,
+                                AES-256-GCM)</strong></div>
+                        <div>Tenant Isolation: <strong class="text-emerald-600">Active (Per-Tenant Key
+                                Rotation)</strong></div>
+                        <div>Offline CLI Tool: <code
+                                class="text-indigo-600 font-bold">backend/tools/verify_bundle.py</code></div>
                     </div>
                     <div class="flex flex-wrap items-center gap-3">
-                        <button onclick="generateHybridEncryptedExport()" class="aegis-pill-btn text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
+                        <button onclick="generateHybridEncryptedExport()"
+                            class="aegis-pill-btn text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
                             <i data-lucide="lock" class="w-3.5 h-3.5"></i>
                             <span>Generate Hybrid-Sealed Export</span>
                         </button>
@@ -1084,11 +1301,13 @@
                         <span>Zero-Knowledge Incident Collaboration (Matrix Megolm E2EE)</span>
                     </h2>
                     <p class="text-xs text-slate-500">
-                        End-to-end encrypted incident channels with client-side WebAssembly cryptography, strict tenant isolation, and zero-plaintext server boundary.
+                        End-to-end encrypted incident channels with client-side WebAssembly cryptography, strict tenant
+                        isolation, and zero-plaintext server boundary.
                     </p>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-mono font-bold border border-emerald-200 flex items-center space-x-1.5">
+                    <span
+                        class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-mono font-bold border border-emerald-200 flex items-center space-x-1.5">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span>MEGOLM v1 AES-256 E2EE ACTIVE</span>
                     </span>
@@ -1103,27 +1322,36 @@
                 <!-- Card 1: Identity & Homeserver -->
                 <div class="aegis-card p-5 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Matrix Client Identity</span>
-                        <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold">ONLINE</span>
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Matrix Client
+                            Identity</span>
+                        <span
+                            class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold">ONLINE</span>
                     </div>
                     <div class="font-mono text-xs space-y-1">
-                        <div>User ID: <strong id="msg-matrix-user-id" class="text-slate-900">@analyst_soc_01:chat.aegis-x.internal</strong></div>
-                        <div>Homeserver: <span id="msg-homeserver-url" class="text-sky-600">https://chat.aegis-x.internal</span></div>
+                        <div>User ID: <strong id="msg-matrix-user-id"
+                                class="text-slate-900">@analyst_soc_01:chat.aegis-x.internal</strong></div>
+                        <div>Homeserver: <span id="msg-homeserver-url"
+                                class="text-sky-600">https://chat.aegis-x.internal</span></div>
                         <div>Device ID: <span class="text-slate-600 font-bold">DEV_BROWSER_WASM_01</span></div>
-                        <div>Crypto Engine: <span class="text-indigo-600 font-bold">Matrix Rust Crypto (WASM)</span></div>
+                        <div>Crypto Engine: <span class="text-indigo-600 font-bold">Matrix Rust Crypto (WASM)</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Card 2: Organizational Policy -->
                 <div class="aegis-card p-5 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Tenant Security Policy</span>
-                        <span id="msg-policy-ver" class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 text-[10px] font-mono font-bold">messaging-policy-v1</span>
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Tenant Security
+                            Policy</span>
+                        <span id="msg-policy-ver"
+                            class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 text-[10px] font-mono font-bold">messaging-policy-v1</span>
                     </div>
                     <div class="font-mono text-xs space-y-1">
-                        <div>Tenant: <span class="text-slate-900 font-bold">Acme FinTech Ltd. (org-acme-fintech-01)</span></div>
+                        <div>Tenant: <span class="text-slate-900 font-bold">Acme FinTech Ltd.
+                                (org-acme-fintech-01)</span></div>
                         <div>Cross-Tenant: <span class="text-red-600 font-bold">PROHIBITED (BLOCKED)</span></div>
-                        <div>Device Trust: <span class="text-emerald-600 font-bold">STRICT (VERIFICATION REQ)</span></div>
+                        <div>Device Trust: <span class="text-emerald-600 font-bold">STRICT (VERIFICATION REQ)</span>
+                        </div>
                         <div>Incident Linking: <span class="text-sky-600 font-bold">AUTHORIZED</span></div>
                     </div>
                 </div>
@@ -1131,33 +1359,44 @@
                 <!-- Card 3: Canary Plaintext Leak Verifier -->
                 <div class="aegis-card p-5 space-y-3 bg-slate-900 text-white">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Canary Plaintext Verifier</span>
-                        <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold border border-emerald-500/30">AUDIT TOOL</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Canary Plaintext
+                            Verifier</span>
+                        <span
+                            class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold border border-emerald-500/30">AUDIT
+                            TOOL</span>
                     </div>
                     <p class="text-[11px] text-slate-300">
-                        Injects a cryptographically unique canary, transmits via Megolm E2EE, and verifies 0 occurrences across all backend database tables.
+                        Injects a cryptographically unique canary, transmits via Megolm E2EE, and verifies 0 occurrences
+                        across all backend database tables.
                     </p>
-                    <button onclick="runCanaryLeakTest()" class="w-full aegis-pill-btn text-xs bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold">
+                    <button onclick="runCanaryLeakTest()"
+                        class="w-full aegis-pill-btn text-xs bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold">
                         <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
                         <span>Run Canary Plaintext Leak Test</span>
                     </button>
-                    <div id="canary-test-result" class="hidden text-[10px] font-mono p-2.5 rounded bg-slate-950 text-emerald-400 border border-slate-800"></div>
+                    <div id="canary-test-result"
+                        class="hidden text-[10px] font-mono p-2.5 rounded bg-slate-950 text-emerald-400 border border-slate-800">
+                    </div>
                 </div>
             </div>
 
             <!-- Main Interactive Collaboration Workspace -->
-            <div class="aegis-card overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px] border border-slate-200">
+            <div
+                class="aegis-card overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px] border border-slate-200">
                 <!-- Left Sidebar: Channels & Directory (4 cols) -->
                 <div class="lg:col-span-4 border-r border-slate-200 bg-slate-50 flex flex-col">
                     <!-- Directory Search -->
                     <div class="p-4 border-b border-slate-200 space-y-2">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Tenant Directory</span>
+                            <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Tenant
+                                Directory</span>
                             <span class="text-[10px] text-slate-400 font-mono">Tenant Scoped</span>
                         </div>
                         <div class="flex gap-1.5">
-                            <input type="text" id="msg-recipient-search" placeholder="Search analysts (e.g. admin)..." class="flex-1 p-2 rounded-lg border border-slate-300 text-xs focus:outline-none focus:border-sky-500 font-mono">
-                            <button onclick="searchMessagingRecipients()" class="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold">
+                            <input type="text" id="msg-recipient-search" placeholder="Search analysts (e.g. admin)..."
+                                class="flex-1 p-2 rounded-lg border border-slate-300 text-xs focus:outline-none focus:border-sky-500 font-mono">
+                            <button onclick="searchMessagingRecipients()"
+                                class="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold">
                                 🔍
                             </button>
                         </div>
@@ -1165,27 +1404,33 @@
 
                     <!-- Channels List -->
                     <div class="p-4 flex-1 overflow-y-auto space-y-2">
-                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Active Encrypted Rooms</div>
-                        
-                        <div onclick="switchActiveChat('incident')" id="chat-item-incident" class="p-3 rounded-xl bg-white border border-sky-400 shadow-sm cursor-pointer transition-all">
+                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Active Encrypted
+                            Rooms</div>
+
+                        <div onclick="switchActiveChat('incident')" id="chat-item-incident"
+                            class="p-3 rounded-xl bg-white border border-sky-400 shadow-sm cursor-pointer transition-all">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="font-bold text-xs text-slate-900 flex items-center space-x-1.5">
                                     <span>🚨</span>
                                     <span>Incident INC-2026-0881</span>
                                 </span>
-                                <span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-bold">E2EE</span>
+                                <span
+                                    class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-bold">E2EE</span>
                             </div>
                             <div class="text-[11px] text-slate-500 truncate">FinanceDB Credential Leak War Room</div>
-                            <div class="text-[10px] text-sky-600 font-mono mt-1">!inc_room_finance_db:chat.aegis-x.internal</div>
+                            <div class="text-[10px] text-sky-600 font-mono mt-1">
+                                !inc_room_finance_db:chat.aegis-x.internal</div>
                         </div>
 
-                        <div onclick="switchActiveChat('direct')" id="chat-item-direct" class="p-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 cursor-pointer transition-all">
+                        <div onclick="switchActiveChat('direct')" id="chat-item-direct"
+                            class="p-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 cursor-pointer transition-all">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="font-bold text-xs text-slate-900 flex items-center space-x-1.5">
                                     <span>👤</span>
                                     <span>Org Admin (Direct)</span>
                                 </span>
-                                <span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-bold">E2EE</span>
+                                <span
+                                    class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-bold">E2EE</span>
                             </div>
                             <div class="text-[11px] text-slate-500 truncate">@admin_01:chat.aegis-x.internal</div>
                             <div class="text-[10px] text-slate-400 font-mono mt-1">Direct Private Chat</div>
@@ -1196,7 +1441,8 @@
 
                     <!-- Room Authorization Action -->
                     <div class="p-4 border-t border-slate-200 bg-white">
-                        <button onclick="authorizeAndCreateRoom()" class="w-full aegis-pill-btn text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-center">
+                        <button onclick="authorizeAndCreateRoom()"
+                            class="w-full aegis-pill-btn text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-center">
                             <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
                             <span>Authorize & Link New Incident Room</span>
                         </button>
@@ -1210,18 +1456,22 @@
                         <div>
                             <div class="font-bold text-sm text-slate-900 flex items-center space-x-2">
                                 <span id="active-chat-title">🚨 Incident INC-2026-0881 — Secure Triage Room</span>
-                                <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono text-[10px] font-bold border border-emerald-300">
+                                <span
+                                    class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono text-[10px] font-bold border border-emerald-300">
                                     🔒 E2EE Megolm
                                 </span>
                             </div>
                             <div class="text-xs text-slate-500 flex items-center space-x-3 mt-0.5">
-                                <span id="active-chat-sub">Linked Incident: INC-2026-0881 &bull; FinanceDB Compromise</span>
-                                <span class="text-emerald-600 font-bold font-mono text-[11px]">✓ Device Keys Verified</span>
+                                <span id="active-chat-sub">Linked Incident: INC-2026-0881 &bull; FinanceDB
+                                    Compromise</span>
+                                <span class="text-emerald-600 font-bold font-mono text-[11px]">✓ Device Keys
+                                    Verified</span>
                             </div>
                         </div>
 
                         <div class="flex items-center space-x-2">
-                            <button onclick="inspectCiphertextEnvelope()" class="px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-mono font-bold text-slate-700 hover:bg-slate-100 flex items-center space-x-1.5">
+                            <button onclick="inspectCiphertextEnvelope()"
+                                class="px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs font-mono font-bold text-slate-700 hover:bg-slate-100 flex items-center space-x-1.5">
                                 <i data-lucide="code" class="w-3.5 h-3.5 text-sky-600"></i>
                                 <span>Inspect Ciphertext Envelope</span>
                             </button>
@@ -1229,10 +1479,12 @@
                     </div>
 
                     <!-- Zero-Plaintext Boundary Notice -->
-                    <div class="px-4 py-2 bg-emerald-50/60 border-b border-emerald-100 text-[11px] text-emerald-800 flex items-center justify-between">
+                    <div
+                        class="px-4 py-2 bg-emerald-50/60 border-b border-emerald-100 text-[11px] text-emerald-800 flex items-center justify-between">
                         <div class="flex items-center space-x-1.5 font-medium">
                             <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
-                            <span>Zero-Plaintext Trust Boundary Active: Encryption/Decryption handled in browser memory via WASM.</span>
+                            <span>Zero-Plaintext Trust Boundary Active: Encryption/Decryption handled in browser memory
+                                via WASM.</span>
                         </div>
                         <span class="font-mono text-[10px] font-bold text-emerald-700">AES-256-GCM Ratchet</span>
                     </div>
@@ -1245,9 +1497,12 @@
                     <!-- Message Composer -->
                     <div class="p-4 border-t border-slate-200 bg-slate-50 flex items-end space-x-3">
                         <div class="flex-1">
-                            <textarea id="msg-compose-input" rows="2" placeholder="Type incident response coordination message (encrypted client-side before sending)..." class="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-sans focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+                            <textarea id="msg-compose-input" rows="2"
+                                placeholder="Type incident response coordination message (encrypted client-side before sending)..."
+                                class="w-full p-2.5 rounded-xl border border-slate-300 text-xs font-sans focus:outline-none focus:border-emerald-500 resize-none"></textarea>
                         </div>
-                        <button onclick="sendEncryptedChatMessage()" class="aegis-pill-btn text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-10 px-5 shrink-0 flex items-center space-x-1.5">
+                        <button onclick="sendEncryptedChatMessage()"
+                            class="aegis-pill-btn text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold h-10 px-5 shrink-0 flex items-center space-x-1.5">
                             <i data-lucide="lock" class="w-3.5 h-3.5"></i>
                             <span>Encrypt & Send</span>
                         </button>
@@ -1264,7 +1519,8 @@
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center space-x-2 font-bold text-slate-900">
                 <span>AEGIS-X v1.0</span>
-                <span class="text-xs text-sky-600 font-mono font-normal">| Continuous Cyber Exposure & Risk Intelligence Platform</span>
+                <span class="text-xs text-sky-600 font-mono font-normal">| Continuous Cyber Exposure & Risk Intelligence
+                    Platform</span>
             </div>
             <div class="text-[11px] text-slate-400">
                 NIST CSF 2.0 Compliant &bull; Cryptographic Hash Audit Enabled
@@ -1273,35 +1529,47 @@
     </footer>
 
     <!-- Merkle Audit & Proof Verification Modal -->
-    <div id="merkle-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-4xl w-full p-6 space-y-6 shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
+    <div id="merkle-modal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div
+            class="bg-white rounded-2xl max-w-4xl w-full p-6 space-y-6 shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
             <div class="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
                         <i data-lucide="shield-check" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <h3 class="text-base font-bold text-slate-900">Cryptographic Merkle Audit Tree & Proof Verification</h3>
-                        <p class="text-xs text-slate-500">NIST CSF 2.0 / SOC 2 Type II Tamper-Proof Execution Log Verification</p>
+                        <h3 class="text-base font-bold text-slate-900">Cryptographic Merkle Audit Tree & Proof
+                            Verification</h3>
+                        <p class="text-xs text-slate-500">NIST CSF 2.0 / SOC 2 Type II Tamper-Proof Execution Log
+                            Verification</p>
                     </div>
                 </div>
-                <button onclick="closeMerkleModal()" class="text-slate-400 hover:text-slate-600 p-2 text-xl font-bold">&times;</button>
+                <button onclick="closeMerkleModal()"
+                    class="text-slate-400 hover:text-slate-600 p-2 text-xl font-bold">&times;</button>
             </div>
 
             <div class="overflow-y-auto space-y-6 pr-1 flex-1">
                 <!-- Merkle Root & HSM Details Card -->
                 <div class="p-5 rounded-xl bg-slate-900 text-white space-y-3 font-mono text-xs shadow-inner">
                     <div class="flex items-center justify-between">
-                        <span class="px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">SHA-256 MERKLE ROOT ANCHOR</span>
+                        <span
+                            class="px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">SHA-256
+                            MERKLE ROOT ANCHOR</span>
                         <span id="modal-merkle-time" class="text-[11px] text-slate-400"></span>
                     </div>
-                    <div class="break-all text-xs font-bold text-emerald-400 bg-slate-950 p-3 rounded-lg border border-slate-800 flex items-center justify-between gap-2" id="modal-merkle-root">
+                    <div class="break-all text-xs font-bold text-emerald-400 bg-slate-950 p-3 rounded-lg border border-slate-800 flex items-center justify-between gap-2"
+                        id="modal-merkle-root">
                         <span>[Click Anchor Merkle Tree to calculate root]</span>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-[11px] pt-1">
-                        <div><span class="text-slate-400">HSM Signature:</span> <span id="modal-hsm-mode" class="text-sky-400 font-bold truncate block">AWS KMS / HSM HMAC-SHA256</span></div>
-                        <div><span class="text-slate-400">Tree Depth:</span> <span id="modal-tree-depth" class="text-amber-400 font-bold">--</span></div>
-                        <div><span class="text-slate-400">Total Leaves:</span> <span id="modal-total-events" class="text-purple-400 font-bold">--</span></div>
+                        <div><span class="text-slate-400">HSM Signature:</span> <span id="modal-hsm-mode"
+                                class="text-sky-400 font-bold truncate block">AWS KMS / HSM HMAC-SHA256</span></div>
+                        <div><span class="text-slate-400">Tree Depth:</span> <span id="modal-tree-depth"
+                                class="text-amber-400 font-bold">--</span></div>
+                        <div><span class="text-slate-400">Total Leaves:</span> <span id="modal-total-events"
+                                class="text-purple-400 font-bold">--</span></div>
                     </div>
                 </div>
 
@@ -1312,8 +1580,11 @@
                         <span>Cryptographic Proof Inclusion Verifier</span>
                     </h4>
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <input type="text" id="verify-hash-input" placeholder="Paste SHA-256 Event Hash to verify inclusion..." class="flex-1 p-2.5 rounded-lg border border-slate-300 font-mono text-xs focus:outline-none focus:border-emerald-500">
-                        <button onclick="runProofVerification()" class="aegis-pill-btn text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold shrink-0">
+                        <input type="text" id="verify-hash-input"
+                            placeholder="Paste SHA-256 Event Hash to verify inclusion..."
+                            class="flex-1 p-2.5 rounded-lg border border-slate-300 font-mono text-xs focus:outline-none focus:border-emerald-500">
+                        <button onclick="runProofVerification()"
+                            class="aegis-pill-btn text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold shrink-0">
                             <span>Verify Proof Path</span>
                         </button>
                     </div>
@@ -1322,7 +1593,8 @@
 
                 <!-- Chained Audit Ledger Table -->
                 <div class="space-y-3">
-                    <h4 class="font-bold text-slate-900 text-xs font-mono uppercase">Anchored Event Hashes & Chained Ledger</h4>
+                    <h4 class="font-bold text-slate-900 text-xs font-mono uppercase">Anchored Event Hashes & Chained
+                        Ledger</h4>
                     <div class="overflow-x-auto border border-slate-200 rounded-xl">
                         <table class="w-full text-left text-xs font-mono">
                             <thead class="bg-slate-100 text-slate-600 border-b border-slate-200">
@@ -1334,7 +1606,9 @@
                                 </tr>
                             </thead>
                             <tbody id="modal-events-table" class="divide-y divide-slate-200 text-slate-700">
-                                <tr><td colspan="4" class="py-4 text-center text-slate-400">Loading audit events...</td></tr>
+                                <tr>
+                                    <td colspan="4" class="py-4 text-center text-slate-400">Loading audit events...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -1627,7 +1901,7 @@
                 // Query security events to verify zero plaintext
                 const res = await fetch('/api/v1/messaging/security-events', { headers: MSG_AUTH_HEADER });
                 const events = await res.json();
-                
+
                 setTimeout(() => {
                     box.className = "text-[10px] font-mono p-2.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800 space-y-1";
                     box.innerHTML = `
@@ -2102,7 +2376,7 @@
             try {
                 const res = await fetch(`/api/v1/incidents/${incidentId}`);
                 const data = await res.json();
-                
+
                 document.getElementById('xai-title').innerText = `${data.title} & XAI Breakdown`;
                 document.getElementById('xai-sev-badge').innerText = `SEVERITY ${data.severity_score} / 100 — ${data.severity}`;
                 document.getElementById('xai-conf-badge').innerText = `CONFIDENCE ${data.confidence_score}% HIGH`;
@@ -2166,7 +2440,7 @@
                     graph.nodes.slice(0, 10).forEach((n, idx) => {
                         const nodeHtml = `
                             <div class="p-4 rounded-xl bg-white border border-slate-200 text-center hover:scale-105 transition-transform cursor-pointer shadow-sm" onclick="showNodeDetails('${n.label}', 'Type: ${n.type} | Criticality: ${n.criticality}')">
-                                <span class="px-2 py-0.5 rounded bg-purple-100 text-purple-700 text-[10px] font-mono font-bold">Node #${idx+1} (${n.type})</span>
+                                <span class="px-2 py-0.5 rounded bg-purple-100 text-purple-700 text-[10px] font-mono font-bold">Node #${idx + 1} (${n.type})</span>
                                 <div class="text-xs font-bold text-slate-900 mt-2">${n.label}</div>
                                 <div class="text-[10px] text-slate-500 mt-1">Criticality: ${n.criticality}/10</div>
                             </div>
@@ -2659,4 +2933,5 @@
         });
     </script>
 </body>
+
 </html>
