@@ -143,19 +143,39 @@ def run_multi_seed_model_comparison(seeds: List[int] = None) -> Dict[str, Any]:
             results_collector[m_name]["ece"].append(ece)
 
     # Aggregate Mean +- Std across 10 seeds
+    feature_descriptions = {
+        "Rule-Only": "Deterministic 9-Factor Expert Weighted Rules",
+        "Logistic Regression": "Standardized L2-Regularized Linear Baseline",
+        "Random Forest": "75 Decision Trees Ensemble (max_depth=4)",
+        "ML-Only (XGBoost)": "Gradient Boosted Trees (XGBoost 2.0+)",
+        "AEGIS-X Full Hybrid": "Calibrated Hybrid (Rule + XGB + Graph)"
+    }
     aggregated_benchmark = {}
     for m_name, metrics in results_collector.items():
+        prec_m = round(float(np.mean(metrics["precision"])), 4)
+        rec_m = round(float(np.mean(metrics["recall"])), 4)
+        f1_m = round(float(np.mean(metrics["f1"])), 4)
+        prauc_m = round(float(np.mean(metrics["prauc"])), 4)
+        ece_m = round(float(np.mean(metrics["ece"])), 4)
+        brier_m = round(float(np.mean(metrics["brier"])), 4)
+
         aggregated_benchmark[m_name] = {
-            "precision_mean": round(float(np.mean(metrics["precision"])), 4),
+            "features_used": feature_descriptions.get(m_name, "Multi-Modal Features"),
+            "precision": prec_m,
+            "recall": rec_m,
+            "macro_f1": f1_m,
+            "pr_auc": prauc_m,
+            "ece": ece_m,
+            "precision_mean": prec_m,
             "precision_std": round(float(np.std(metrics["precision"])), 4),
-            "recall_mean": round(float(np.mean(metrics["recall"])), 4),
+            "recall_mean": rec_m,
             "recall_std": round(float(np.std(metrics["recall"])), 4),
-            "f1_mean": round(float(np.mean(metrics["f1"])), 4),
+            "f1_mean": f1_m,
             "f1_std": round(float(np.std(metrics["f1"])), 4),
-            "prauc_mean": round(float(np.mean(metrics["prauc"])), 4),
+            "prauc_mean": prauc_m,
             "prauc_std": round(float(np.std(metrics["prauc"])), 4),
-            "brier_score": round(float(np.mean(metrics["brier"])), 4),
-            "ece_score": round(float(np.mean(metrics["ece"])), 4)
+            "brier_score": brier_m,
+            "ece_score": ece_m
         }
 
     return aggregated_benchmark
@@ -322,8 +342,8 @@ def run_ablation_study() -> Dict[str, Any]:
     with open("backend/data/research_benchmark_results.json", "w") as f:
         json.dump(full_research_results, f, indent=2)
 
-    # Retain backward-compatible ablation_results.json for UI
-    with open("backend/data/ablation_results.json", "w") as f:
+    # Retain model class benchmarks for architecture comparison
+    with open("backend/data/model_class_benchmarks.json", "w") as f:
         json.dump(model_benchmarks, f, indent=2)
 
     return full_research_results

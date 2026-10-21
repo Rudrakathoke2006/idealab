@@ -1,3 +1,4 @@
+import os
 import json
 import hashlib
 import datetime
@@ -412,12 +413,64 @@ def get_graph_data(db: Session = Depends(get_db)):
     return {"nodes": nodes, "edges": edges, "choke_point_analysis": choke}
 
 @router.get("/ablation")
-def get_ablation_metrics():
-    try:
-        with open("backend/data/ablation_results.json", "r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return run_ablation_study()
+def get_ablation_metrics(view: Optional[str] = "8_stage"):
+    """
+    Returns research benchmark metrics:
+      - '8_stage' (default): 8-Stage Feature Progression (Model A to Model H)
+      - 'model_class': 10-Seed Multi-Class Architecture Comparison (Rule, LR, RF, XGB, Hybrid)
+    """
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    target_filename = "model_class_benchmarks.json" if view == "model_class" else "ablation_results.json"
+    
+    candidate_paths = [
+        os.path.join(base_dir, "data", target_filename),
+        os.path.join("backend", "data", target_filename),
+        os.path.join("data", target_filename),
+    ]
+
+    data = None
+    for p in candidate_paths:
+        if os.path.exists(p):
+            try:
+                with open(p, "r") as f:
+                    data = json.load(f)
+                if data:
+                    break
+            except Exception:
+                continue
+
+    if not data:
+        try:
+            full_results = run_ablation_study()
+            if view == "model_class":
+                data = full_results.get("model_class_comparison_10_seeds", {})
+            else:
+                for p in candidate_paths:
+                    if os.path.exists(p):
+                        with open(p, "r") as f:
+                            data = json.load(f)
+                            break
+        except Exception:
+            data = {}
+
+    normalized = {}
+    if isinstance(data, dict):
+        for k, v in data.items():
+            if isinstance(v, dict):
+                norm_item = {
+                    "features_used": v.get("features_used") or v.get("features") or "Multi-Modal Context",
+                    "precision": float(v.get("precision") if v.get("precision") is not None else v.get("precision_mean", 0.0)),
+                    "recall": float(v.get("recall") if v.get("recall") is not None else v.get("recall_mean", 0.0)),
+                    "macro_f1": float(v.get("macro_f1") if v.get("macro_f1") is not None else v.get("f1_mean", 0.0)),
+                    "pr_auc": float(v.get("pr_auc") if v.get("pr_auc") is not None else v.get("prauc_mean", 0.0)),
+                    "ece": float(v.get("ece") if v.get("ece") is not None else v.get("ece_score", 0.0)),
+                }
+                for extra_k, extra_v in v.items():
+                    if extra_k not in norm_item:
+                        norm_item[extra_k] = extra_v
+                normalized[k] = norm_item
+
+    return normalized
 
 @router.post("/extract-entity")
 def extract_entity(payload: Dict[str, str]):

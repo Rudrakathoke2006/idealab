@@ -1,6 +1,12 @@
 {
   "model_class_comparison_10_seeds": {
     "Rule-Only": {
+      "features_used": "Deterministic 9-Factor Expert Weighted Rules",
+      "precision": 0.0,
+      "recall": 0.0,
+      "macro_f1": 0.0,
+      "pr_auc": 0.0924,
+      "ece": 0.0201,
       "precision_mean": 0.0,
       "precision_std": 0.0,
       "recall_mean": 0.0,
@@ -13,6 +19,12 @@
       "ece_score": 0.0201
     },
     "Logistic Regression": {
+      "features_used": "Standardized L2-Regularized Linear Baseline",
+      "precision": 0.4817,
+      "recall": 0.1034,
+      "macro_f1": 0.1661,
+      "pr_auc": 0.3885,
+      "ece": 0.0173,
       "precision_mean": 0.4817,
       "precision_std": 0.1645,
       "recall_mean": 0.1034,
@@ -25,6 +37,12 @@
       "ece_score": 0.0173
     },
     "Random Forest": {
+      "features_used": "75 Decision Trees Ensemble (max_depth=4)",
+      "precision": 0.0,
+      "recall": 0.0,
+      "macro_f1": 0.0,
+      "pr_auc": 0.3738,
+      "ece": 0.0311,
       "precision_mean": 0.0,
       "precision_std": 0.0,
       "recall_mean": 0.0,
@@ -37,6 +55,12 @@
       "ece_score": 0.0311
     },
     "ML-Only (XGBoost)": {
+      "features_used": "Gradient Boosted Trees (XGBoost 2.0+)",
+      "precision": 0.4368,
+      "recall": 0.1289,
+      "macro_f1": 0.1911,
+      "pr_auc": 0.377,
+      "ece": 0.0175,
       "precision_mean": 0.4368,
       "precision_std": 0.1718,
       "recall_mean": 0.1289,
@@ -49,6 +73,12 @@
       "ece_score": 0.0175
     },
     "AEGIS-X Full Hybrid": {
+      "features_used": "Calibrated Hybrid (Rule + XGB + Graph)",
+      "precision": 0.3833,
+      "recall": 0.0144,
+      "macro_f1": 0.0273,
+      "pr_auc": 0.3737,
+      "ece": 0.0368,
       "precision_mean": 0.3833,
       "precision_std": 0.4349,
       "recall_mean": 0.0144,
