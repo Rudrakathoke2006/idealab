@@ -75,26 +75,29 @@ def run_all_dossier_experiments() -> Dict[str, Any]:
     print("Leakage Audit Status:", guide_results["LEAKAGE_AUDIT"]["status"])
 
     # -------------------------------------------------------------
-    # Experiment 4: Table II - RQ2 Attack Simulator (S1-S7 x B0-B5)
+    # Experiment 4: Table II - RQ2 Attack Simulator (S1-S7 x B0-B7, 30 seeds)
     # -------------------------------------------------------------
-    print("\n[4/6] Running RQ2 Feed-Poisoning Attack Simulator Benchmark (30 seeds)...")
-    seeds_pilot = [42, 43, 44, 45, 46, 47, 48, 49, 50, 51] # 10 seeds for high-speed deterministic run
-    rq2_table = rq2_attack_simulator.run_multi_seed_rq2_benchmark(seeds=seeds_pilot, forging_capacity_q=0.0)
+    print("\n[4/7] Running RQ2 Feed-Poisoning Attack Simulator Benchmark (30 seeds, 9 defenses)...")
+    seeds_30 = list(range(42, 72)) # 30 seeds
+    rq2_table = rq2_attack_simulator.run_multi_seed_rq2_benchmark(seeds=seeds_30, forging_capacity_q=0.0)
 
-    print("--- Table II: Attacker-Induced Disruption D (Mean +- Std) across Defenses ---")
-    print(f"{'Strategy':<24} | {'B0 (Auto)':<14} | {'B1 (Static)':<14} | {'B4 (Proposed)':<16} | {'T0 Violations (B4)':<18}")
-    print("-" * 95)
+    print("--- Table II: Attacker Disruption D (Mean +- Std) and T0 Violations across Defenses ---")
+    print(f"{'Strategy':<22} | {'B0 (Harsh)':<12} | {'B0 (Mild)':<12} | {'B1 (Static)':<12} | {'B6 (CostOnly)':<14} | {'B7 (AgentLock)':<14} | {'B4 (AEGIS-X)':<14} | {'T0 Viol (B4)':<12}")
+    print("-" * 125)
     for strat in rq2_attack_simulator.STRATEGIES:
-        b0_d = f"{rq2_table[strat]['B0_auto_execute']['disruption_mean']:.1f} +- {rq2_table[strat]['B0_auto_execute']['disruption_std']:.1f}"
-        b1_d = f"{rq2_table[strat]['B1_static_name_list']['disruption_mean']:.1f} +- {rq2_table[strat]['B1_static_name_list']['disruption_std']:.1f}"
+        b0_d = f"{rq2_table[strat]['B0_auto_execute']['disruption_mean']:.1f}"
+        b0m_d = f"{rq2_table[strat]['B0_mild_action']['disruption_mean']:.1f}"
+        b1_d = f"{rq2_table[strat]['B1_static_name_list']['disruption_mean']:.1f}"
+        b6_d = f"{rq2_table[strat]['B6_cost_budget_only']['disruption_mean']:.1f} (V:{rq2_table[strat]['B6_cost_budget_only']['total_t0_violations']})"
+        b7_d = f"{rq2_table[strat]['B7_agent_lock_budget']['disruption_mean']:.1f}"
         b4_d = f"{rq2_table[strat]['B4_proposed_guardrail']['disruption_mean']:.1f} +- {rq2_table[strat]['B4_proposed_guardrail']['disruption_std']:.1f}"
         t0_v = rq2_table[strat]['B4_proposed_guardrail']['total_t0_violations']
-        print(f"{strat:<24} | {b0_d:<14} | {b1_d:<14} | {b4_d:<16} | {t0_v:<18}")
+        print(f"{strat:<22} | {b0_d:<12} | {b0m_d:<12} | {b1_d:<12} | {b6_d:<14} | {b7_d:<14} | {b4_d:<14} | {t0_v:<12}")
 
     # -------------------------------------------------------------
     # Experiment 5: Table III - Forging Capacity Sweep (Proposition 3)
     # -------------------------------------------------------------
-    print("\n[5/6] Running Forging Capacity Sweep q in {0, 0.1, 0.25, 0.5, 1.0}...")
+    print("\n[5/7] Running Forging Capacity Sweep q in {0, 0.1, 0.25, 0.5, 1.0}...")
     q_values = [0.0, 0.10, 0.25, 0.50, 1.0]
     q_sweep_results = {}
     for q in q_values:
@@ -115,7 +118,7 @@ def run_all_dossier_experiments() -> Dict[str, Any]:
     # -------------------------------------------------------------
     # Experiment 6: Proposition 1 Exact Additivity Verification
     # -------------------------------------------------------------
-    print("\n[6/6] Verifying Proposition 1 Exact Additivity across sample cases...")
+    print("\n[6/7] Verifying Proposition 1 Exact Additivity across sample cases...")
     test_feature_vectors = [
         [9.0, 9.0, 10.0, 2.0, 9.5, 8.5, 1.0, 0.0, 0.0, 1.0, 1.0, 0.85, 1.0],
         [3.0, 3.0, 4.0, 48.0, 6.0, 2.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.02, 0.0],
@@ -128,12 +131,46 @@ def run_all_dossier_experiments() -> Dict[str, Any]:
     max_additivity_error = max(c["additivity_error"] for c in additivity_checks)
     print(f"Max Additivity Error across verification cases: {max_additivity_error:.12f} (Exact: {max_additivity_error < 1e-4})")
 
+    # -------------------------------------------------------------
+    # Experiment 7: Section IV-L Analyst Operational Sensitivity Sweeps (M1)
+    # -------------------------------------------------------------
+    print("\n[7/7] Running Analyst Operational Sensitivity Sweeps across 30 seeds (Section IV-L / M1)...")
+    analyst_sweeps = rq2_attack_simulator.run_analyst_sensitivity_sweeps(seeds=seeds_30, strategy="S4_alias_bypass")
+
+    print("\n--- Sensitivity Sweep 1: Analyst False-Action Rate (per-alert p_err in [0.02, 0.30]) ---")
+    print(f"{'p_err':<8} | {'B1 Disruption':<16} | {'B1 SR %':<10} | {'B4 Disruption':<16} | {'B4 SR %':<10} | {'B5 Disruption':<16} | {'B5 SR %':<10}")
+    print("-" * 105)
+    for p_err in [0.02, 0.05, 0.10, 0.15, 0.20, 0.30]:
+        b1_info = analyst_sweeps["sweep_false_action_rate"]["B1_static_name_list"][p_err]
+        b4_info = analyst_sweeps["sweep_false_action_rate"]["B4_proposed_guardrail"][p_err]
+        b5_info = analyst_sweeps["sweep_false_action_rate"]["B5_recommend_only"][p_err]
+        print(f"{p_err:<8.2f} | {b1_info['disruption_mean']:<5.1f} +- {b1_info['disruption_std']:<8.1f} | {b1_info['sr_mean']:<10.1f} | {b4_info['disruption_mean']:<5.1f} +- {b4_info['disruption_std']:<8.1f} | {b4_info['sr_mean']:<10.1f} | {b5_info['disruption_mean']:<5.1f} +- {b5_info['disruption_std']:<8.1f} | {b5_info['sr_mean']:<10.1f}")
+
+    print("\n--- Sensitivity Sweep 2: Analyst Review Capacity (Approvals/day in [6, 24]) ---")
+    print(f"{'Cap/day':<10} | {'B1 SR %':<12} | {'B4 SR %':<12} | {'B5 SR %':<12}")
+    print("-" * 55)
+    for cap in [6, 12, 18, 24]:
+        b1_sr = analyst_sweeps["sweep_analyst_capacity"]["B1_static_name_list"][cap]["sr_mean"]
+        b4_sr = analyst_sweeps["sweep_analyst_capacity"]["B4_proposed_guardrail"][cap]["sr_mean"]
+        b5_sr = analyst_sweeps["sweep_analyst_capacity"]["B5_recommend_only"][cap]["sr_mean"]
+        print(f"{cap:<10} | {b1_sr:<12.1f} | {b4_sr:<12.1f} | {b5_sr:<12.1f}")
+
+    print("\n--- Sensitivity Sweep 3: Approval Turnaround Delay (Hours in [2, 24]) ---")
+    print(f"{'Delay (h)':<10} | {'B1 SR %':<12} | {'B4 SR %':<12} | {'B5 SR %':<12}")
+    print("-" * 55)
+    for dly in [2.0, 4.0, 8.0, 12.0, 18.0, 24.0]:
+        b1_sr = analyst_sweeps["sweep_approval_delay"]["B1_static_name_list"][dly]["sr_mean"]
+        b4_sr = analyst_sweeps["sweep_approval_delay"]["B4_proposed_guardrail"][dly]["sr_mean"]
+        b5_sr = analyst_sweeps["sweep_approval_delay"]["B5_recommend_only"][dly]["sr_mean"]
+        print(f"{dly:<10.1f} | {b1_sr:<12.1f} | {b4_sr:<12.1f} | {b5_sr:<12.1f}")
+
     # Compile master results dictionary
     master_results = {
         "metadata": {
             "platform": "AEGIS-X Research Core",
-            "date": "2026-10-16",
+            "date": "2026-10-22",
             "version": default_engine_config.version,
+            "seeds_count": len(seeds_30),
             "venue_target": "AI-SEC 2027 / SVCC 2027 / IEEE Access"
         },
         "table_iv_vulnerability_baselines": vuln_results,
@@ -141,6 +178,7 @@ def run_all_dossier_experiments() -> Dict[str, Any]:
         "table_vi_guide_triage_benchmark": guide_results,
         "table_ii_rq2_poisoning_defense_matrix": rq2_table,
         "table_iii_forging_capacity_sweep": q_sweep_results,
+        "table_iv_l_analyst_sensitivity_sweeps": analyst_sweeps,
         "proposition_1_additivity": {
             "max_error": max_additivity_error,
             "theorem_satisfied": bool(max_additivity_error < 1e-4)
@@ -152,7 +190,10 @@ def run_all_dossier_experiments() -> Dict[str, Any]:
     with open("backend/data/research_dossier_results.json", "w") as f:
         json.dump(master_results, f, indent=2)
 
-    print("\nMaster Research Results saved to backend/data/research_dossier_results.json!")
+    with open("backend/data/analyst_sensitivity_results.json", "w") as f:
+        json.dump(analyst_sweeps, f, indent=2)
+
+    print("\nMaster Research Results saved to backend/data/research_dossier_results.json and backend/data/analyst_sensitivity_results.json!")
     return master_results
 
 if __name__ == "__main__":

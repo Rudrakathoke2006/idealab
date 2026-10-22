@@ -46,8 +46,9 @@ class RQ2AttackSimulator:
     STRATEGIES = ["S1_random", "S2_high_impact", "S3_service_accounts", "S4_alias_bypass",
                   "S5_forged_credibility", "S6_slow_drip", "S7_coordinated_incident", "S_adaptive"]
 
-    DEFENSES = ["B0_auto_execute", "B1_static_name_list", "B2_score_corroboration",
-                "B3_rate_limit_only", "B4_proposed_guardrail", "B5_recommend_only"]
+    DEFENSES = ["B0_auto_execute", "B0_mild_action", "B1_static_name_list", "B2_score_corroboration",
+                "B3_rate_limit_only", "B4_proposed_guardrail", "B5_recommend_only",
+                "B6_cost_budget_only", "B7_agent_lock_budget"]
 
     def __init__(self, seed: int = 42, config: Optional[EngineConfig] = None):
         self.seed = seed
@@ -234,6 +235,45 @@ class RQ2AttackSimulator:
             # Human-in-the-loop only: zero automated execution, all sent to queue
             return {"decision": "RECOMMEND_ONLY", "requires_approval": True}
 
+        elif defense == "B0_mild_action":
+            # Baseline B0 with mildest action (REVOKE_ALL_SESSIONS, kappa=0.20) to isolate severity confound
+            return {"decision": "ALLOW", "requires_approval": False, "action": "REVOKE_ALL_SESSIONS"}
+
+        elif defense == "B6_cost_budget_only":
+            # Cost-budget-only without Graph T0: tracks disruption budget B_total = 10.0
+            # Does NOT check protected set T0 and does not resolve topological centrality
+            cost = guardrail_gate.compute_disruption_cost(action, entity)
+            t = incident["timestamp"]
+            cutoff = t - datetime.timedelta(minutes=guardrail_gate.config.guardrail.window_minutes)
+            if not hasattr(guardrail_gate, "_b6_history"):
+                guardrail_gate._b6_history = []
+            guardrail_gate._b6_history = [e for e in guardrail_gate._b6_history if e[0] > cutoff]
+            current_cost = sum(e[1] for e in guardrail_gate._b6_history)
+            b_total = guardrail_gate.config.guardrail.b_high + guardrail_gate.config.guardrail.b_low
+            if current_cost + cost <= b_total:
+                guardrail_gate._b6_history.append((t, cost))
+                return {"decision": "ALLOW", "requires_approval": False, "cost": cost}
+            return {"decision": "APPROVAL", "requires_approval": True, "cost": cost}
+
+        elif defense == "B7_agent_lock_budget":
+            # Agent-Lock style: Graph T0 check + unstratified blast-radius budget B_total = 10.0
+            # Has NO credibility stratification: low-credibility poisoning consumes the entire budget pool
+            canon_id = canonical_resolver.canonicalize(entity)
+            if canonical_resolver.is_tier_0(canon_id, self.t0_set):
+                return {"decision": "APPROVAL", "requires_approval": True, "cost": 0.0}
+            cost = guardrail_gate.compute_disruption_cost(action, canon_id)
+            t = incident["timestamp"]
+            cutoff = t - datetime.timedelta(minutes=guardrail_gate.config.guardrail.window_minutes)
+            if not hasattr(guardrail_gate, "_b7_history"):
+                guardrail_gate._b7_history = []
+            guardrail_gate._b7_history = [e for e in guardrail_gate._b7_history if e[0] > cutoff]
+            current_cost = sum(e[1] for e in guardrail_gate._b7_history)
+            b_total = guardrail_gate.config.guardrail.b_high + guardrail_gate.config.guardrail.b_low
+            if current_cost + cost <= b_total:
+                guardrail_gate._b7_history.append((t, cost))
+                return {"decision": "ALLOW", "requires_approval": False, "cost": cost}
+            return {"decision": "APPROVAL", "requires_approval": True, "cost": cost}
+
         return {"decision": "ALLOW", "requires_approval": False}
 
     def run_simulation_trial(
@@ -259,6 +299,8 @@ class RQ2AttackSimulator:
         # Clear histories
         gate._window_history = {"HIGH": [], "LOW": []}
         gate._action_history.clear()
+        gate._b6_history = []
+        gate._b7_history = []
 
         attacker_disruption_d = 0.0
         t0_violations = 0
@@ -277,6 +319,7 @@ class RQ2AttackSimulator:
 
             eval_res = self.evaluate_defense_policy(defense, inc, gate)
             allowed = (eval_res["decision"] == "ALLOW")
+            action_executed = eval_res.get("action", action)
 
             if eval_res.get("requires_approval", False):
                 total_escalations += 1
@@ -288,7 +331,7 @@ class RQ2AttackSimulator:
 
             # Compute Disruption Cost for attacker injections
             if allowed and is_adv:
-                cost = gate.compute_disruption_cost(action, canon_id)
+                cost = gate.compute_disruption_cost(action_executed, canon_id)
                 attacker_disruption_d += cost
 
             # Compute Benign Remediation
@@ -358,5 +401,217 @@ class RQ2AttackSimulator:
                 }
 
         return aggregated_table
+
+    def run_simulation_with_analyst(
+        self,
+        strategy: str,
+        defense: str,
+        false_action_rate: float = 0.05,
+        analyst_capacity_per_day: int = 12,
+        approval_delay_hours: float = 4.0,
+        lateral_movement_sla_hours: float = 24.0,
+        forging_capacity_q: float = 0.0,
+        incidents: Optional[List[Dict[str, Any]]] = None
+    ) -> Dict[str, Any]:
+        """
+        Evaluates operational performance incorporating human-analyst review:
+          - false_action_rate (p_err): probability analyst mistakenly approves fake alerts or rejects true alerts.
+          - analyst_capacity_per_day (C): max approval reviews per 24 hours (queuing backlog if exceeded).
+          - approval_delay_hours (tau): baseline review and turnaround delay.
+          - lateral_movement_sla_hours (T_SLA): maximum permissible containment horizon.
+        """
+        if incidents is None:
+            incidents = self.generate_incident_stream(
+                strategy=strategy,
+                num_benign=100,
+                injection_intensity=0.20,
+                forging_capacity_q=forging_capacity_q
+            )
+
+        gate = CredibilityStratifiedGuardrailGate(config=self.config)
+        gate._window_history = {"HIGH": [], "LOW": []}
+        gate._action_history.clear()
+        gate._b6_history = []
+        gate._b7_history = []
+
+        attacker_disruption_d = 0.0
+        t0_violations = 0
+        true_compromises_total = 0
+        true_compromises_remediated = 0
+        escalated_queue: List[Dict[str, Any]] = []
+
+        # Step 1: Immediate evaluation by policy gate
+        for inc in incidents:
+            entity = inc["exposed_entity"]
+            is_adv = inc["is_adversarial_injection"]
+            is_true = inc["is_true_compromise"]
+            action = inc["candidate_action"]
+            t_arr = inc["timestamp"]
+
+            if is_true:
+                true_compromises_total += 1
+
+            eval_res = self.evaluate_defense_policy(defense, inc, gate)
+            allowed = (eval_res["decision"] == "ALLOW")
+            action_executed = eval_res.get("action", action)
+            canon_id = canonical_resolver.canonicalize(entity)
+            cost = gate.compute_disruption_cost(action_executed, canon_id)
+
+            if allowed:
+                # Automated execution: zero human delay
+                if canonical_resolver.is_tier_0(canon_id, self.t0_set):
+                    t0_violations += 1
+                if is_adv:
+                    attacker_disruption_d += cost
+                if is_true:
+                    true_compromises_remediated += 1
+            else:
+                # Escalated to human review queue
+                escalated_queue.append({
+                    "timestamp": t_arr,
+                    "is_adv": is_adv,
+                    "is_true": is_true,
+                    "entity": canon_id,
+                    "action": action_executed,
+                    "cost": cost
+                })
+
+        # Step 2: Simulate human analyst queue processing
+        escalated_count = len(escalated_queue)
+        service_interval_hours = 24.0 / max(1, analyst_capacity_per_day)
+        analyst_available_time = incidents[0]["timestamp"] if incidents else datetime.datetime.now(datetime.timezone.utc)
+
+        for ticket in escalated_queue:
+            t_arr = ticket["timestamp"]
+            # Analyst starts when available and after ticket arrival
+            start_time = max(t_arr, analyst_available_time)
+            # Finish time includes processing delay
+            finish_time = start_time + datetime.timedelta(hours=approval_delay_hours)
+            analyst_available_time = start_time + datetime.timedelta(hours=service_interval_hours)
+
+            total_delay_hours = (finish_time - t_arr).total_seconds() / 3600.0
+
+            if ticket["is_adv"]:
+                # Analyst false action: approves malicious injection with prob false_action_rate
+                if self.rng.rand() < false_action_rate:
+                    attacker_disruption_d += ticket["cost"]
+                    if canonical_resolver.is_tier_0(ticket["entity"], self.t0_set):
+                        t0_violations += 1
+
+            elif ticket["is_true"]:
+                # Analyst approval: approves genuine containment with prob (1 - false_action_rate)
+                analyst_approves = (self.rng.rand() >= false_action_rate)
+                if analyst_approves and total_delay_hours <= lateral_movement_sla_hours:
+                    true_compromises_remediated += 1
+
+        remediation_rate = (true_compromises_remediated / max(1, true_compromises_total)) * 100.0
+
+        return {
+            "strategy": strategy,
+            "defense": defense,
+            "false_action_rate": false_action_rate,
+            "analyst_capacity_per_day": analyst_capacity_per_day,
+            "approval_delay_hours": approval_delay_hours,
+            "attacker_disruption_d": round(float(attacker_disruption_d), 2),
+            "t0_violations": t0_violations,
+            "remediation_rate_pct": round(float(remediation_rate), 1),
+            "escalated_count": escalated_count
+        }
+
+    def run_analyst_sensitivity_sweeps(
+        self,
+        seeds: Optional[List[int]] = None,
+        strategy: str = "S4_alias_bypass",
+        defenses: Optional[List[str]] = None
+    ) -> Dict[str, Any]:
+        """
+        Executes Section IV-L parameter sweeps across 30 seeds:
+          1. Analyst false-action rate in [0.02, 0.05, 0.10, 0.15, 0.20, 0.30]
+          2. Analyst review capacity in [6, 12, 18, 24] per day
+          3. Approval delay in [2.0, 4.0, 8.0, 12.0, 18.0, 24.0] hours
+        """
+        seeds = seeds or list(range(42, 72)) # 30 seeds
+        defenses = defenses or ["B1_static_name_list", "B3_rate_limit_only", "B4_proposed_guardrail", "B5_recommend_only"]
+
+        false_action_rates = [0.02, 0.05, 0.10, 0.15, 0.20, 0.30]
+        capacities = [6, 12, 18, 24]
+        delays = [2.0, 4.0, 8.0, 12.0, 18.0, 24.0]
+
+        # 1. Sweep false-action rate (fixed capacity=12, delay=4h)
+        sweep_false_action: Dict[str, Dict[float, Dict[str, float]]] = {defn: {} for defn in defenses}
+        for rate in false_action_rates:
+            for defn in defenses:
+                d_list, sr_list = [], []
+                for s in seeds:
+                    sim = RQ2AttackSimulator(seed=s, config=self.config)
+                    res = sim.run_simulation_with_analyst(
+                        strategy=strategy,
+                        defense=defn,
+                        false_action_rate=rate,
+                        analyst_capacity_per_day=12,
+                        approval_delay_hours=4.0
+                    )
+                    d_list.append(res["attacker_disruption_d"])
+                    sr_list.append(res["remediation_rate_pct"])
+                sweep_false_action[defn][rate] = {
+                    "disruption_mean": round(float(np.mean(d_list)), 2),
+                    "disruption_std": round(float(np.std(d_list)), 2),
+                    "sr_mean": round(float(np.mean(sr_list)), 1),
+                    "sr_std": round(float(np.std(sr_list)), 1)
+                }
+
+        # 2. Sweep analyst capacity (fixed rate=0.05, delay=4h)
+        sweep_capacity: Dict[str, Dict[int, Dict[str, float]]] = {defn: {} for defn in defenses}
+        for cap in capacities:
+            for defn in defenses:
+                d_list, sr_list = [], []
+                for s in seeds:
+                    sim = RQ2AttackSimulator(seed=s, config=self.config)
+                    res = sim.run_simulation_with_analyst(
+                        strategy=strategy,
+                        defense=defn,
+                        false_action_rate=0.05,
+                        analyst_capacity_per_day=cap,
+                        approval_delay_hours=4.0
+                    )
+                    d_list.append(res["attacker_disruption_d"])
+                    sr_list.append(res["remediation_rate_pct"])
+                sweep_capacity[defn][cap] = {
+                    "disruption_mean": round(float(np.mean(d_list)), 2),
+                    "disruption_std": round(float(np.std(d_list)), 2),
+                    "sr_mean": round(float(np.mean(sr_list)), 1),
+                    "sr_std": round(float(np.std(sr_list)), 1)
+                }
+
+        # 3. Sweep approval delay (fixed rate=0.05, capacity=12)
+        sweep_delay: Dict[str, Dict[float, Dict[str, float]]] = {defn: {} for defn in defenses}
+        for dly in delays:
+            for defn in defenses:
+                d_list, sr_list = [], []
+                for s in seeds:
+                    sim = RQ2AttackSimulator(seed=s, config=self.config)
+                    res = sim.run_simulation_with_analyst(
+                        strategy=strategy,
+                        defense=defn,
+                        false_action_rate=0.05,
+                        analyst_capacity_per_day=12,
+                        approval_delay_hours=dly
+                    )
+                    d_list.append(res["attacker_disruption_d"])
+                    sr_list.append(res["remediation_rate_pct"])
+                sweep_delay[defn][dly] = {
+                    "disruption_mean": round(float(np.mean(d_list)), 2),
+                    "disruption_std": round(float(np.std(d_list)), 2),
+                    "sr_mean": round(float(np.mean(sr_list)), 1),
+                    "sr_std": round(float(np.std(sr_list)), 1)
+                }
+
+        return {
+            "strategy": strategy,
+            "seeds_count": len(seeds),
+            "sweep_false_action_rate": sweep_false_action,
+            "sweep_analyst_capacity": sweep_capacity,
+            "sweep_approval_delay": sweep_delay
+        }
 
 rq2_attack_simulator = RQ2AttackSimulator()

@@ -1,0 +1,418 @@
+{
+  "strategy": "S4_alias_bypass",
+  "seeds_count": 30,
+  "sweep_false_action_rate": {
+    "B1_static_name_list": {
+      "0.02": {
+        "disruption_mean": 48.97,
+        "disruption_std": 8.15,
+        "sr_mean": 99.1,
+        "sr_std": 2.5
+      },
+      "0.05": {
+        "disruption_mean": 49.8,
+        "disruption_std": 8.14,
+        "sr_mean": 98.1,
+        "sr_std": 2.8
+      },
+      "0.1": {
+        "disruption_mean": 50.3,
+        "disruption_std": 8.15,
+        "sr_mean": 95.7,
+        "sr_std": 4.2
+      },
+      "0.15": {
+        "disruption_mean": 51.13,
+        "disruption_std": 8.0,
+        "sr_mean": 94.5,
+        "sr_std": 4.7
+      },
+      "0.2": {
+        "disruption_mean": 51.63,
+        "disruption_std": 8.11,
+        "sr_mean": 93.6,
+        "sr_std": 5.0
+      },
+      "0.3": {
+        "disruption_mean": 53.3,
+        "disruption_std": 9.23,
+        "sr_mean": 90.7,
+        "sr_std": 6.0
+      }
+    },
+    "B3_rate_limit_only": {
+      "0.02": {
+        "disruption_mean": 6.53,
+        "disruption_std": 4.48,
+        "sr_mean": 15.6,
+        "sr_std": 6.3
+      },
+      "0.05": {
+        "disruption_mean": 7.77,
+        "disruption_std": 5.31,
+        "sr_mean": 15.0,
+        "sr_std": 6.2
+      },
+      "0.1": {
+        "disruption_mean": 11.13,
+        "disruption_std": 5.02,
+        "sr_mean": 14.4,
+        "sr_std": 6.5
+      },
+      "0.15": {
+        "disruption_mean": 14.17,
+        "disruption_std": 5.48,
+        "sr_mean": 14.4,
+        "sr_std": 6.5
+      },
+      "0.2": {
+        "disruption_mean": 17.63,
+        "disruption_std": 5.36,
+        "sr_mean": 14.3,
+        "sr_std": 6.3
+      },
+      "0.3": {
+        "disruption_mean": 23.57,
+        "disruption_std": 5.96,
+        "sr_mean": 13.7,
+        "sr_std": 6.1
+      }
+    },
+    "B4_proposed_guardrail": {
+      "0.02": {
+        "disruption_mean": 1.6,
+        "disruption_std": 2.73,
+        "sr_mean": 89.1,
+        "sr_std": 6.2
+      },
+      "0.05": {
+        "disruption_mean": 3.63,
+        "disruption_std": 3.38,
+        "sr_mean": 88.5,
+        "sr_std": 6.3
+      },
+      "0.1": {
+        "disruption_mean": 7.33,
+        "disruption_std": 5.36,
+        "sr_mean": 87.7,
+        "sr_std": 6.8
+      },
+      "0.15": {
+        "disruption_mean": 10.6,
+        "disruption_std": 6.77,
+        "sr_mean": 86.5,
+        "sr_std": 6.7
+      },
+      "0.2": {
+        "disruption_mean": 13.97,
+        "disruption_std": 8.24,
+        "sr_mean": 85.8,
+        "sr_std": 7.3
+      },
+      "0.3": {
+        "disruption_mean": 20.0,
+        "disruption_std": 9.18,
+        "sr_mean": 84.2,
+        "sr_std": 7.4
+      }
+    },
+    "B5_recommend_only": {
+      "0.02": {
+        "disruption_mean": 1.73,
+        "disruption_std": 2.8,
+        "sr_mean": 7.5,
+        "sr_std": 4.3
+      },
+      "0.05": {
+        "disruption_mean": 3.07,
+        "disruption_std": 4.2,
+        "sr_mean": 6.9,
+        "sr_std": 4.6
+      },
+      "0.1": {
+        "disruption_mean": 6.1,
+        "disruption_std": 4.85,
+        "sr_mean": 6.4,
+        "sr_std": 4.3
+      },
+      "0.15": {
+        "disruption_mean": 8.63,
+        "disruption_std": 5.62,
+        "sr_mean": 6.0,
+        "sr_std": 3.9
+      },
+      "0.2": {
+        "disruption_mean": 12.07,
+        "disruption_std": 6.5,
+        "sr_mean": 6.0,
+        "sr_std": 3.9
+      },
+      "0.3": {
+        "disruption_mean": 20.3,
+        "disruption_std": 8.56,
+        "sr_mean": 5.2,
+        "sr_std": 3.3
+      }
+    }
+  },
+  "sweep_analyst_capacity": {
+    "B1_static_name_list": {
+      "6": {
+        "disruption_mean": 49.8,
+        "disruption_std": 8.14,
+        "sr_mean": 93.6,
+        "sr_std": 6.5
+      },
+      "12": {
+        "disruption_mean": 49.8,
+        "disruption_std": 8.14,
+        "sr_mean": 98.1,
+        "sr_std": 2.8
+      },
+      "18": {
+        "disruption_mean": 49.8,
+        "disruption_std": 8.14,
+        "sr_mean": 98.1,
+        "sr_std": 2.8
+      },
+      "24": {
+        "disruption_mean": 49.8,
+        "disruption_std": 8.14,
+        "sr_mean": 98.1,
+        "sr_std": 2.8
+      }
+    },
+    "B3_rate_limit_only": {
+      "6": {
+        "disruption_mean": 7.77,
+        "disruption_std": 5.31,
+        "sr_mean": 11.3,
+        "sr_std": 5.5
+      },
+      "12": {
+        "disruption_mean": 7.77,
+        "disruption_std": 5.31,
+        "sr_mean": 15.0,
+        "sr_std": 6.2
+      },
+      "18": {
+        "disruption_mean": 7.77,
+        "disruption_std": 5.31,
+        "sr_mean": 20.5,
+        "sr_std": 7.5
+      },
+      "24": {
+        "disruption_mean": 7.77,
+        "disruption_std": 5.31,
+        "sr_mean": 27.0,
+        "sr_std": 8.4
+      }
+    },
+    "B4_proposed_guardrail": {
+      "6": {
+        "disruption_mean": 3.63,
+        "disruption_std": 3.38,
+        "sr_mean": 78.6,
+        "sr_std": 6.1
+      },
+      "12": {
+        "disruption_mean": 3.63,
+        "disruption_std": 3.38,
+        "sr_mean": 88.5,
+        "sr_std": 6.3
+      },
+      "18": {
+        "disruption_mean": 3.63,
+        "disruption_std": 3.38,
+        "sr_mean": 98.2,
+        "sr_std": 2.4
+      },
+      "24": {
+        "disruption_mean": 3.63,
+        "disruption_std": 3.38,
+        "sr_mean": 98.2,
+        "sr_std": 2.4
+      }
+    },
+    "B5_recommend_only": {
+      "6": {
+        "disruption_mean": 3.07,
+        "disruption_std": 4.2,
+        "sr_mean": 3.6,
+        "sr_std": 4.3
+      },
+      "12": {
+        "disruption_mean": 3.07,
+        "disruption_std": 4.2,
+        "sr_mean": 6.9,
+        "sr_std": 4.6
+      },
+      "18": {
+        "disruption_mean": 3.07,
+        "disruption_std": 4.2,
+        "sr_mean": 11.9,
+        "sr_std": 4.8
+      },
+      "24": {
+        "disruption_mean": 3.07,
+        "disruption_std": 4.2,
+        "sr_mean": 17.9,
+        "sr_std": 6.7
+      }
+    }
+  },
+  "sweep_approval_delay": {
+    "B1_static_name_list": {
+      "2.0": {
+        "disruption_mean": 49.8,
+        "disruption_std": 8.14,
+        "sr_mean": 98.1,
+        "sr_std": 2.8
+      },
+      "4.0": {
+        "disruption_mean": 49.8,
+        "disruption_std": 8.14,
+        "sr_mean": 98.1,
+        "sr_std": 2.8
+      },
+      "8.0": {
+        "disruption_mean": 49.8,
+        "disruption_std": 8.14,
+        "sr_mean": 98.1,
+        "sr_std": 2.8
+      },
+      "12.0": {
+        "disruption_mean": 49.8,
+        "disruption_std": 8.14,
+        "sr_mean": 98.1,
+        "sr_std": 2.8
+      },
+      "18.0": {
+        "disruption_mean": 49.8,
+        "disruption_std": 8.14,
+        "sr_mean": 96.1,
+        "sr_std": 4.1
+      },
+      "24.0": {
+        "disruption_mean": 49.8,
+        "disruption_std": 8.14,
+        "sr_mean": 77.5,
+        "sr_std": 9.6
+      }
+    },
+    "B3_rate_limit_only": {
+      "2.0": {
+        "disruption_mean": 7.77,
+        "disruption_std": 5.31,
+        "sr_mean": 15.9,
+        "sr_std": 6.7
+      },
+      "4.0": {
+        "disruption_mean": 7.77,
+        "disruption_std": 5.31,
+        "sr_mean": 15.0,
+        "sr_std": 6.2
+      },
+      "8.0": {
+        "disruption_mean": 7.77,
+        "disruption_std": 5.31,
+        "sr_mean": 13.6,
+        "sr_std": 5.9
+      },
+      "12.0": {
+        "disruption_mean": 7.77,
+        "disruption_std": 5.31,
+        "sr_mean": 11.8,
+        "sr_std": 5.7
+      },
+      "18.0": {
+        "disruption_mean": 7.77,
+        "disruption_std": 5.31,
+        "sr_mean": 10.2,
+        "sr_std": 5.6
+      },
+      "24.0": {
+        "disruption_mean": 7.77,
+        "disruption_std": 5.31,
+        "sr_mean": 7.6,
+        "sr_std": 4.7
+      }
+    },
+    "B4_proposed_guardrail": {
+      "2.0": {
+        "disruption_mean": 3.63,
+        "disruption_std": 3.38,
+        "sr_mean": 90.6,
+        "sr_std": 5.7
+      },
+      "4.0": {
+        "disruption_mean": 3.63,
+        "disruption_std": 3.38,
+        "sr_mean": 88.5,
+        "sr_std": 6.3
+      },
+      "8.0": {
+        "disruption_mean": 3.63,
+        "disruption_std": 3.38,
+        "sr_mean": 85.4,
+        "sr_std": 7.0
+      },
+      "12.0": {
+        "disruption_mean": 3.63,
+        "disruption_std": 3.38,
+        "sr_mean": 81.7,
+        "sr_std": 7.1
+      },
+      "18.0": {
+        "disruption_mean": 3.63,
+        "disruption_std": 3.38,
+        "sr_mean": 76.4,
+        "sr_std": 7.2
+      },
+      "24.0": {
+        "disruption_mean": 3.63,
+        "disruption_std": 3.38,
+        "sr_mean": 72.5,
+        "sr_std": 7.7
+      }
+    },
+    "B5_recommend_only": {
+      "2.0": {
+        "disruption_mean": 3.07,
+        "disruption_std": 4.2,
+        "sr_mean": 8.1,
+        "sr_std": 4.6
+      },
+      "4.0": {
+        "disruption_mean": 3.07,
+        "disruption_std": 4.2,
+        "sr_mean": 6.9,
+        "sr_std": 4.6
+      },
+      "8.0": {
+        "disruption_mean": 3.07,
+        "disruption_std": 4.2,
+        "sr_mean": 5.8,
+        "sr_std": 4.6
+      },
+      "12.0": {
+        "disruption_mean": 3.07,
+        "disruption_std": 4.2,
+        "sr_mean": 3.9,
+        "sr_std": 4.4
+      },
+      "18.0": {
+        "disruption_mean": 3.07,
+        "disruption_std": 4.2,
+        "sr_mean": 2.6,
+        "sr_std": 3.5
+      },
+      "24.0": {
+        "disruption_mean": 3.07,
+        "disruption_std": 4.2,
+        "sr_mean": 0.6,
+        "sr_std": 1.3
+      }
+    }
+  }
+}
