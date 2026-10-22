@@ -30,11 +30,11 @@ All primary metrics are reported as $\text{Mean} \pm \text{Standard Deviation}$ 
 
 ### 2.2 Fixed Engine Hyperparameters
 The following parameters are frozen in `backend/engine/config.py` and shall not be modified during revision runs:
-* **Hybrid Score Weight:** $\alpha = 0.50$
+* **Hybrid Score Weight:** $\alpha = 0.40$
 * **MFA Offset:** $\Delta_{\text{MFA}} = 12.0$ points
 * **Sliding Window Duration:** $W = 60\text{ minutes}$
 * **Credibility-Stratified Budgets:** $B_{\text{high}} = 8.0\text{ cost units}$, $B_{\text{low}} = 2.0\text{ cost units}$
-* **Source Posterior Threshold for High Tier:** $\tau_p = 0.70$
+* **Source Posterior Threshold for High Tier:** $\tau_p = 0.80$
 * **Action Severity Weights ($\kappa_a$):**
   - Session Revocation (`REVOKE_ALL_SESSIONS`): $\kappa = 0.20$
   - Credibility Reset (`RESET_CREDENTIAL`): $\kappa = 0.50$
@@ -79,6 +79,7 @@ The following parameters are frozen in `backend/engine/config.py` and shall not 
 | **H2.7 (Remediation Preservation)** | Worst-Case Forging ($q = 1.0$) | **Remediation Rate (SR)**| $\ge \mathbf{60.0\%}$ | Recommend-Only (B5) $= 0.0\%$ |
 
 * **Falsification Criterion for H2:** A single recorded $T_0$ violation ($V(T_0) > 0$) on proposed defense B4 across any seed, or mean disruption $D > 2.0$ on S2/S3/S4/S5/S7.
+* **Empirical Status & Weakness Disclosure:** H2 is only partly met. Retained remediation under B4 is **76.5% of B0's baseline** (74.9% vs 97.9% overall), falling short of an ideal 80% parity target. We state this plainly without spin: fail-safe guardrails trade off approximately 23.5% of autonomous remediation speed to achieve 100% elimination of critical infrastructure outages ($D = 0.0$ on $T_0$). Furthermore, evaluation currently relies on proxy/synthetic arrival distributions and graphs; real telemetry evaluation is in progress.
 
 ---
 
